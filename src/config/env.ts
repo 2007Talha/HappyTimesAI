@@ -26,6 +26,8 @@ import { z } from 'zod';
 const envSchema = z.object({
   /** Google Gemini API key — optional to support deterministic-only mode */
   GEMINI_API_KEY: z.string().min(1).optional(),
+  /** Gemini model identifier — defaults to latest flash model */
+  GEMINI_MODEL: z.string().default('gemini-3.8-flash'),
   /** Current Node environment */
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   /** Max API requests per rate-limit window */
@@ -53,6 +55,7 @@ export type EnvConfig = z.infer<typeof envSchema>;
 function loadEnvConfig(): EnvConfig {
   const result = envSchema.safeParse({
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+    GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
     NODE_ENV: process.env.NODE_ENV,
     RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS,
     RATE_LIMIT_WINDOW_MS: process.env.RATE_LIMIT_WINDOW_MS,
@@ -68,6 +71,7 @@ function loadEnvConfig(): EnvConfig {
     // Return safe defaults so the app can still boot in demo mode
     return {
       GEMINI_API_KEY: undefined,
+      GEMINI_MODEL: 'gemini-3.8-flash',
       NODE_ENV: 'development',
       RATE_LIMIT_MAX_REQUESTS: 20,
       RATE_LIMIT_WINDOW_MS: 60000,

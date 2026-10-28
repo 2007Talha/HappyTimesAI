@@ -79,14 +79,31 @@ async function generateWithLLM(intake: EventIntake): Promise<LLMResult> {
   const startTime = Date.now();
   const prompt = buildPrompt(intake);
 
-  const response = await client.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      temperature: 0.7,
-    },
-  });
+  const targetModel = env.GEMINI_MODEL || 'gemini-3.8-flash';
+  let response;
+  let modelUsed = targetModel;
+
+  try {
+    response = await client.models.generateContent({
+      model: targetModel,
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.7,
+      },
+    });
+  } catch (primaryError) {
+    console.warn(`[happytimes] Primary model ${targetModel} unavailable, falling back to gemini-2.5-flash:`, primaryError);
+    modelUsed = 'gemini-2.5-flash';
+    response = await client.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.7,
+      },
+    });
+  }
 
   const text = response.text ?? '';
   const parsed = JSON.parse(text);
@@ -156,7 +173,7 @@ async function generateWithLLM(intake: EventIntake): Promise<LLMResult> {
   return {
     plan,
     source: 'llm',
-    modelUsed: 'gemini-2.5-flash',
+    modelUsed,
     latencyMs: Date.now() - startTime,
   };
 }
