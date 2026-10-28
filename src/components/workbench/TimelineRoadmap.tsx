@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import type { TimelineMilestone, DayOfScheduleItem } from '@/schemas/eventSchemas';
 import { exportTimelineToIcs, downloadFile } from '@/lib/export/exporters';
+import { fireConfetti } from '@/lib/confetti';
 
 interface TimelineRoadmapProps {
   eventName: string;
@@ -43,11 +44,19 @@ export function TimelineRoadmap({
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   const toggleMilestone = (id: string) => {
-    const updated = milestones.map((m) =>
-      m.id === id ? { ...m, isComplete: !m.isComplete } : m
-    );
+    let wasChecked = false;
+    const updated = milestones.map((m) => {
+      if (m.id === id) {
+        if (!m.isComplete) wasChecked = true;
+        return { ...m, isComplete: !m.isComplete };
+      }
+      return m;
+    });
     setMilestones(updated);
     onMilestonesChange?.(updated);
+    if (wasChecked) {
+      fireConfetti(1200);
+    }
   };
 
   const handleExportIcs = () => {

@@ -202,41 +202,119 @@ export function rebalanceBudget(
 ): BudgetCategory[] {
   const updated = categories.map((c) => ({ ...c }));
   const oldPercentage = updated[changedIndex].percentage;
-  const delta = newPercentage - oldPercentage;
 
-  updated[changedIndex].percentage = newPercentage;
-  updated[changedIndex].estimatedCents = Math.round((newPercentage / 100) * totalCents);
-
-  // Collect unlocked categories (excluding the changed one)
+  // Unlocked categories excluding the changed one
   const unlocked = updated
     .map((c, i) => ({ category: c, index: i }))
     .filter(({ category, index }) => !category.isLocked && index !== changedIndex);
 
-  if (unlocked.length === 0) return updated;
-
-  const totalUnlockedPercentage = unlocked.reduce(
-    (sum, { category }) => sum + category.percentage,
-    0,
-  );
-
-  if (totalUnlockedPercentage <= 0) return updated;
-
-  // Distribute delta proportionally among unlocked categories
-  for (const { category } of unlocked) {
-    const proportion = category.percentage / totalUnlockedPercentage;
-    category.percentage = Math.max(0, category.percentage - delta * proportion);
-    category.percentage = Math.round(category.percentage * 100) / 100;
-    category.estimatedCents = Math.round((category.percentage / 100) * totalCents);
+  // If no other unlocked categories, lock this category to its old percentage
+  if (unlocked.length === 0) {
+    return updated;
   }
 
-  // Rounding correction: ensure percentages sum to exactly 100
-  const totalPct = updated.reduce((sum, c) => sum + c.percentage, 0);
-  const pctDiff = 100 - totalPct;
-  if (Math.abs(pctDiff) > 0.001 && unlocked.length > 0) {
-    unlocked[0].category.percentage += Math.round(pctDiff * 100) / 100;
-    unlocked[0].category.estimatedCents = Math.round(
-      (unlocked[0].category.percentage / 100) * totalCents,
+  const requestedDelta = newPercentage - oldPercentage;
+
+  if (requestedDelta > 0) {
+    // User wants to increase: can only take up to what unlocked categories have
+    const availableToTake = unlocked.reduce((sum, { category }) => sum + category.percentage, 0);
+    const actualDelta = Math.min(requestedDelta, availableToTake);
+
+    updated[changedIndex].percentage = Math.round((oldPercentage + actualDelta) * 100) / 100;
+    updated[changedIndex].estimatedCents = Math.round((updated[changedIndex].percentage / 100) * totalCents);
+
+    if (availableToTake > 0) {
+      for (const { category } of unlocked) {
+        const share = category.percentage / availableToTake;
+        category.percentage = Math.max(0, category.percentage - actualDelta * share);
+        category.percentage = Math.round(category.percentage * 100) / 100;
+        category.estimatedCents = Math.round((category.percentage / 100) * totalCents);
+      }
+    }
+  } else if (requestedDelta < 0) {
+    // User wants to decrease: gives budget back to unlocked categories
+    const freedAmount = Math.abs(requestedDelta);
+    const clampedNewPct = Math.max(0, newPercentage);
+    const actualFreed = oldPercentage - clampedNewPct;
+
+    updated[changedIndex].percentage = clampedNewPct;
+    updated[changedIndex].estimatedCents = Math.round((clampedNewPct / 100) * totalCents);
+
+    const totalUnlockedPercentage = unlocked.reduce(
+      (sum, { category }) => sum + category.percentage,
+      0,
     );
+
+    if (totalUnlockedPercentage > 0) {
+      // Distribute proportionally to current non-zero shares
+      for (const { category } of unlocked) {
+        const share = category.percentage / totalUnlockedPercentage;
+        category.percentage = category.percentage + actualFreed * share;
+        category.percentage = Math.round(category.percentage * 100) / 100;
+        category.estimatedCents = Math.round((category.percentage / 100) * totalCents);
+      }
+    } else {
+      // If all unlocked are at 0%, distribute the freed budget equally
+      const equalShare = actualFreed / unlocked.length;
+      for (const { category } of unlocked) {
+        category.percentage = Math.round(equalShare * 100) / 100;
+        category.estimatedCents = Math.round((category.percentage / 100) * totalCents);
+      }
+    }
+  }
+
+  // Ensure sum of all categories equals exactly 100.00%
+  const currentSum = updated.reduce((sum, c) => sum + c.percentage, 0);
+  const diff = 100 - currentSum;
+  if (Math.abs(diff) > 0.001 && unlocked.length > 0) {
+    unlocked[0].category.percentage = Math.max(0, Math.round((unlocked[0].category.percentage + diff) * 100) / 100);
+    unlocked[0].category.estimatedCents = Math.round((unlocked[0].category.percentage / 100) * totalCents);
+  }
+
+  // Re-sync all estimatedCents so the dollar sum matches totalCents to the penny
+  let currentCentsSum = updated.reduce((sum, c) => sum + c.estimatedCents, 0);
+  let centsDiff = totalCents - currentCentsSum;
+  if (centsDiff !== 0 && unlocked.length > 0) {
+    unlocked[0].category.estimatedCents += centsDiff;
+  }
+
+  return updated;
+}
+
+/**
+ * Distribute remaining budget percentage evenly across all unlocked categories.
+ * @param categories - Current budget categories
+ * @param totalCents - Total budget in cents
+ * @returns Updated categories with even allocation
+ */
+export function distributeEvenly(
+  categories: BudgetCategory[],
+  totalCents: number,
+): BudgetCategory[] {
+  const updated = categories.map((c) => ({ ...c }));
+  const lockedSum = updated.filter((c) => c.isLocked).reduce((sum, c) => sum + c.percentage, 0);
+  const remainingPct = Math.max(0, 100 - lockedSum);
+  const unlocked = updated.filter((c) => !c.isLocked);
+
+  if (unlocked.length > 0) {
+    const rawShare = remainingPct / unlocked.length;
+    for (const c of unlocked) {
+      c.percentage = Math.round(rawShare * 100) / 100;
+      c.estimatedCents = Math.round((c.percentage / 100) * totalCents);
+    }
+    const currentSum = updated.reduce((sum, c) => sum + c.percentage, 0);
+    const diff = 100 - currentSum;
+    if (Math.abs(diff) > 0.001) {
+      unlocked[0].percentage = Math.round((unlocked[0].percentage + diff) * 100) / 100;
+      unlocked[0].estimatedCents = Math.round((unlocked[0].percentage / 100) * totalCents);
+    }
+  }
+
+  // Ensure cent sum matches
+  const currentCentsSum = updated.reduce((sum, c) => sum + c.estimatedCents, 0);
+  const centsDiff = totalCents - currentCentsSum;
+  if (centsDiff !== 0 && unlocked.length > 0) {
+    unlocked[0].estimatedCents += centsDiff;
   }
 
   return updated;

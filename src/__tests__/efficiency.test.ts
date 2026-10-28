@@ -137,6 +137,27 @@ describe('Efficiency: Penny-Accurate Budget Arithmetic Engine', () => {
     expect(Math.round(totalPct)).toBe(100);
   });
 
+  it('should recover other categories when sliding down from 100% allocation without getting stuck at 0', () => {
+    const totalDollars = 10000;
+    const totalCents = dollarsToCents(totalDollars);
+    const initialCategories: BudgetCategory[] = [
+      { name: 'Cat A', percentage: 100, estimatedCents: totalCents, actualCents: 0, isLocked: false },
+      { name: 'Cat B', percentage: 0, estimatedCents: 0, actualCents: 0, isLocked: false },
+      { name: 'Cat C', percentage: 0, estimatedCents: 0, actualCents: 0, isLocked: false },
+    ];
+
+    // Slide Cat A down from 100% to 60%
+    const rebalanced = rebalanceBudget(initialCategories, totalCents, 0, 60);
+
+    expect(rebalanced[0].percentage).toBe(60);
+    // Cat B and Cat C should split the 40% freed budget equally (20% each)
+    expect(rebalanced[1].percentage).toBe(20);
+    expect(rebalanced[2].percentage).toBe(20);
+
+    const totalPct = rebalanced.reduce((sum, c) => sum + c.percentage, 0);
+    expect(totalPct).toBe(100);
+  });
+
   it('should calculate budget variances correctly', () => {
     const categories: BudgetCategory[] = [
       { name: 'Venue', estimatedCents: 500000, actualCents: 550000, percentage: 50, isLocked: false }, // $500 over

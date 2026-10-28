@@ -31,6 +31,7 @@ import { IdeaGallery } from '@/components/workbench/IdeaGallery';
 import { TelemetryBar } from '@/components/workbench/TelemetryBar';
 import type { EventIntake, EventPlan, Telemetry } from '@/schemas/eventSchemas';
 import { generateDeterministic } from '@/services/llmGateway';
+import { fireConfetti } from '@/lib/confetti';
 
 export default function HomePage(): React.JSX.Element {
   const [currentIntake, setCurrentIntake] = useState<EventIntake | null>(null);
@@ -274,7 +275,7 @@ export default function HomePage(): React.JSX.Element {
             {/* Event Summary Banner */}
             <div className="p-8 bg-white rounded-3xl border border-slate-200/90 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#f1effd] text-[#6842ed] border border-[#ded8f9]">
                     {currentIntake?.eventType} VERTICAL
                   </span>
@@ -282,6 +283,14 @@ export default function HomePage(): React.JSX.Element {
                   <span className="text-slate-500 font-medium">
                     Event Date: <strong className="text-[#1c192b]">{currentIntake?.eventDate}</strong>
                   </span>
+                  {currentIntake?.eventDate && (
+                    <>
+                      <span className="text-slate-300">•</span>
+                      <span className="font-semibold text-amber-800 bg-[#fffbeb] border border-[#fef3c7] px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                        ⏰ {Math.max(0, Math.ceil((new Date(currentIntake.eventDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))} Days Away
+                      </span>
+                    </>
+                  )}
                   <span className="text-slate-300">•</span>
                   <span className="text-slate-500 font-medium">
                     Guests: <strong className="text-[#1c192b]">{currentIntake?.guestCount}</strong>
@@ -295,13 +304,23 @@ export default function HomePage(): React.JSX.Element {
                 </p>
               </div>
 
-              <div className="flex items-center gap-6 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
+              <div className="flex flex-wrap items-center gap-5 border-t md:border-t-0 pt-4 md:pt-0 border-slate-100">
                 <div className="text-right">
                   <span className="text-xs text-slate-400 block font-bold uppercase tracking-wider">Total Budget</span>
                   <span className="text-3xl font-editorial font-bold text-[#6842ed]">
                     ${currentIntake?.totalBudget.toLocaleString()}
                   </span>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => fireConfetti(2500)}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold bg-gradient-to-r from-amber-400 via-pink-500 to-[#6842ed] text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  title="Fire a celebratory confetti burst!"
+                >
+                  <PartyPopper className="w-4 h-4" />
+                  Party Burst
+                </button>
               </div>
             </div>
 

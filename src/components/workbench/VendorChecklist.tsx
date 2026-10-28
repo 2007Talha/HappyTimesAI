@@ -18,6 +18,7 @@ import {
   Briefcase,
 } from 'lucide-react';
 import type { VendorItem } from '@/schemas/eventSchemas';
+import { fireConfetti } from '@/lib/confetti';
 
 interface VendorChecklistProps {
   initialVendors: VendorItem[];
@@ -71,10 +72,18 @@ export function VendorChecklist({
   };
 
   const toggleVendorStatus = (id: string) => {
-    const updated = vendors.map((v) =>
-      v.id === id ? { ...v, isChecked: !v.isChecked } : v
-    );
+    let wasBooked = false;
+    const updated = vendors.map((v) => {
+      if (v.id === id) {
+        if (!v.isChecked) wasBooked = true;
+        return { ...v, isChecked: !v.isChecked };
+      }
+      return v;
+    });
     saveVendors(updated);
+    if (wasBooked) {
+      fireConfetti(1200);
+    }
   };
 
   const toggleQuestions = (id: string) => {

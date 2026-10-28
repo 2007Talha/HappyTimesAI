@@ -117,9 +117,9 @@ EventForge / happytimes chatbot rejects the brittle "plain chatbot text box" par
   - `src/lib/efficiency/budgetCalculator.ts`: Zero tokens wasted on arithmetic. Deterministic penny-accurate math and slider rebalancing.
   - `src/lib/efficiency/responseCache.ts`: Deterministic SHA-256 keyed LRU cache with TTL and latency savings metrics.
 - **Automated Testing Suite (Vitest):**
-  - **31 passing tests across 3 test suites (`src/__tests__/`):**
+  - **32 passing tests across 3 test suites (`src/__tests__/`):**
     - `security.test.ts` (17 tests): PII redaction, prompt injection defense, XSS sanitization, schema edge cases.
-    - `efficiency.test.ts` (8 tests): LRU cache hits/misses/TTL/eviction, penny-accurate budget math, lock rebalancing.
+    - `efficiency.test.ts` (9 tests): LRU cache hits/misses/TTL/eviction, penny-accurate budget math, lock rebalancing, 0% recovery redistribution.
     - `plannerService.test.ts` (6 tests): End-to-end orchestration, multi-event vertical generation, cache hits.
 
 ### Tier 3: LOW IMPACT — Accessibility (WCAG 2.1 AA) & Polish
