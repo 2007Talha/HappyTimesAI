@@ -158,7 +158,7 @@ export async function planEvent(
       telemetry,
     };
   } catch (error) {
-    console.error('[EventForge] Planning error:', error);
+    console.error('[HappyTimes] Planning error:', error);
     return {
       success: false,
       plan: null,

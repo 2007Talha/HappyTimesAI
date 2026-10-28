@@ -1,4 +1,4 @@
-# happytimes chatbot — GenAI-Powered Event Planning Assistant
+# HappyTimes — Event Planning Assistant
 
 > A production-grade, accessible, secure, and fully tested web application for organizing **Weddings, Birthdays, and Community Events** featuring dynamic **Budgets, Dual Timelines, Vendor Due-Diligence Checklists, and Creative Ideation**.
 
@@ -16,7 +16,7 @@
 
 ## 2. Approach and Logic
 
-EventForge / happytimes chatbot rejects the brittle "plain chatbot text box" paradigm in favor of an **interactive operational workbench** combining strict defensive engineering, zero-token deterministic math, and GenAI creativity:
+HappyTimes rejects the brittle "plain chatbot text box" paradigm in favor of an **interactive operational workbench** combining strict defensive engineering, zero-token deterministic math, and GenAI creativity:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐

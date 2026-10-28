@@ -1,5 +1,5 @@
 /**
- * @fileoverview Security Test Suite for EventForge AI.
+ * @fileoverview Security Test Suite for HappyTimes.
  * Tests PII redaction, prompt injection detection, input sanitization,
  * and schema rejection of invalid/malicious payloads.
  */

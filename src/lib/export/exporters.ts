@@ -1,5 +1,5 @@
 /**
- * @fileoverview Export utilities for EventForge AI.
+ * @fileoverview Export utilities for HappyTimes.
  * Provides CSV budget export, .ics iCalendar file generation for timelines,
  * and browser file download helpers.
  */
@@ -113,7 +113,7 @@ export function exportTimelineToIcs(
   const lines: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//EventForge AI//Event Planning Assistant//EN',
+    'PRODID:-//HappyTimes//Event Planning Assistant//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${eventName} Schedule`,
@@ -127,7 +127,7 @@ export function exportTimelineToIcs(
     const dtEnd = formatIcsDateTime(m.dueDate, '10:00');
     lines.push(
       'BEGIN:VEVENT',
-      `UID:milestone-${m.id}@eventforge.ai`,
+      `UID:milestone-${m.id}@happytimes.app`,
       `DTSTAMP:${nowIcs}`,
       `DTSTART:${dtStart}`,
       `DTEND:${dtEnd}`,
@@ -145,7 +145,7 @@ export function exportTimelineToIcs(
     const dtEnd = formatIcsDateTime(eventDate, item.endTime || item.time);
     lines.push(
       'BEGIN:VEVENT',
-      `UID:dayof-${item.id}@eventforge.ai`,
+      `UID:dayof-${item.id}@happytimes.app`,
       `DTSTAMP:${nowIcs}`,
       `DTSTART:${dtStart}`,
       `DTEND:${dtEnd}`,

@@ -45,7 +45,7 @@ function getClient(): GoogleGenAI | null {
  * @returns System prompt string
  */
 function buildPrompt(intake: EventIntake): string {
-  return `You are happytimes chatbot, an expert event planner. Generate a comprehensive event plan for:
+  return `You are HappyTimes, an expert event planner. Generate a comprehensive event plan for:
 Event Type: ${intake.eventType}
 Event Name: ${intake.eventName}
 Total Budget: $${intake.totalBudget}
@@ -93,7 +93,7 @@ async function generateWithLLM(intake: EventIntake): Promise<LLMResult> {
       },
     });
   } catch (primaryError) {
-    console.warn(`[happytimes] Primary model ${targetModel} unavailable, falling back to gemini-2.5-flash:`, primaryError);
+    console.warn(`[HappyTimes] Primary model ${targetModel} unavailable, falling back to gemini-2.5-flash:`, primaryError);
     modelUsed = 'gemini-2.5-flash';
     response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
@@ -273,7 +273,7 @@ export async function generateEventPlan(intake: EventIntake): Promise<LLMResult>
     try {
       return await generateWithLLM(intake);
     } catch (error) {
-      console.warn('[EventForge] LLM generation failed, falling back to deterministic:', error);
+      console.warn('[HappyTimes] LLM generation failed, falling back to deterministic:', error);
     }
   }
   return generateDeterministic(intake);

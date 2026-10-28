@@ -65,7 +65,7 @@ function loadEnvConfig(): EnvConfig {
 
   if (!result.success) {
     console.warn(
-      '[EventForge] Environment validation warnings:',
+      '[HappyTimes] Environment validation warnings:',
       result.error.flatten().fieldErrors,
     );
     // Return safe defaults so the app can still boot in demo mode

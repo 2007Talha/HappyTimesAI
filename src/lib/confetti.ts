@@ -92,3 +92,4 @@ export function fireConfetti(durationMs: number = 2000): void {
 
   requestAnimationFrame(render);
 }
+

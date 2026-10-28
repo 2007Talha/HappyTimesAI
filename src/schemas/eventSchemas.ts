@@ -1,5 +1,5 @@
 /**
- * @fileoverview Comprehensive Zod schemas for the EventForge AI domain model.
+ * @fileoverview Comprehensive Zod schemas for the HappyTimes domain model.
  *
  * Every schema is exported alongside its inferred TypeScript type so that
  * runtime validation and compile-time type-checking stay in sync.

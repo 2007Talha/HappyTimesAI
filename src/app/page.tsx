@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * @fileoverview Main Page for happytimes chatbot — GenAI-Powered Event Planning Assistant.
+ * @fileoverview Main Page for HappyTimes — Event Planning Assistant.
  * Designed with a spacious, airy light theme, editorial typography,
  * floating pill navigation, and full WCAG 2.1 AA accessibility.
  */
@@ -110,17 +110,44 @@ export default function HomePage(): React.JSX.Element {
       {/* Spacious, Elegant Top Navigation Bar — Styled after Journal AI reference */}
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-2xs">
         <nav aria-label="Main Navigation" className="max-w-7xl mx-auto px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-          {/* Logo & Brand */}
+          {/* Logo & Brand — Clean, authentic product icon mark */}
           <div className="flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#6842ed] to-[#8d69f7] flex items-center justify-center text-white shadow-sm shadow-[#6842ed]/30">
-              <PartyPopper className="w-5 h-5" aria-hidden="true" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#6842ed] via-[#7850f7] to-[#926cfc] flex items-center justify-center text-white shadow-md shadow-[#6842ed]/25 ring-1 ring-white/50 shrink-0">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 drop-shadow-xs"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 20L9.5 14.5"
+                  stroke="white"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M5.5 18.5C4.6 17.6 4.9 16.1 6 15L14 7C15.1 5.9 16.6 5.6 17.5 6.5C18.4 7.4 18.1 8.9 17 10L9 18C7.9 19.1 6.4 19.4 5.5 18.5Z"
+                  fill="white"
+                  fillOpacity="0.22"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M19 3L20 5L22 6L20 7L19 9L18 7L16 6L18 5L19 3Z"
+                  fill="#fef08a"
+                />
+                <circle cx="20.5" cy="13.5" r="1.3" fill="#fed7aa" />
+                <circle cx="12" cy="4.5" r="1.2" fill="#fed7aa" />
+              </svg>
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight text-[#171520] flex items-center gap-1.5 font-editorial">
-                happytimes <span className="text-xs font-sans font-bold px-2 py-0.5 rounded-full bg-[#f1effd] text-[#6842ed] border border-[#e1ddfa]">chatbot</span>
+              <span className="text-xl font-bold tracking-tight text-[#171520] font-editorial flex items-center gap-1.5">
+                HappyTimes
               </span>
-              <span className="text-[11px] text-slate-400 block -mt-0.5">
-                AI Event Architecture Studio
+              <span className="text-[11px] text-slate-400 block -mt-0.5 font-medium">
+                Event Planning Studio
               </span>
             </div>
           </div>
@@ -405,7 +432,7 @@ export default function HomePage(): React.JSX.Element {
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
             <p className="font-bold text-[#1c192b]">
-              happytimes chatbot — GenAI-Powered Event Planning Assistant
+              HappyTimes — Event Planning Assistant
             </p>
             <p className="text-slate-400 mt-0.5">
               Strictly engineered for WCAG 2.1 AA accessibility, defensive security, and penny-accurate arithmetic.

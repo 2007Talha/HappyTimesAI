@@ -1,5 +1,5 @@
 /**
- * @fileoverview Efficiency Test Suite for EventForge AI.
+ * @fileoverview Efficiency Test Suite for HappyTimes.
  * Validates deterministic SHA-256 LRU cache operations, penny-accurate budget math,
  * percentage rebalancing with category locking, and variance tracking.
  */

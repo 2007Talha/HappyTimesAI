@@ -46,7 +46,7 @@ export function VendorChecklist({
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
-        const stored = localStorage.getItem(`eventforge_vendors_${eventId}`);
+        const stored = localStorage.getItem(`happytimes_vendors_${eventId}`) || localStorage.getItem(`eventforge_vendors_${eventId}`);
         if (stored) {
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -64,7 +64,7 @@ export function VendorChecklist({
     onVendorsChange?.(newVendors);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(`eventforge_vendors_${eventId}`, JSON.stringify(newVendors));
+        localStorage.setItem(`happytimes_vendors_${eventId}`, JSON.stringify(newVendors));
       } catch (err) {
         console.warn('Error saving vendors to localStorage', err);
       }

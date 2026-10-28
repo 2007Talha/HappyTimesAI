@@ -18,9 +18,9 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "happytimes chatbot — GenAI Event Architecture Studio",
+  title: "HappyTimes — Event Planning Assistant",
   description:
-    "Production-grade, accessible event planning assistant for Weddings, Birthdays, and Community Events with interactive budgets, dual timelines, vendor checklists, and creative ideas.",
+    "HappyTimes is your thoughtful, accessible event planning studio for Weddings, Birthdays, and Community Gatherings with dynamic budgets, dual timelines, and vendor checklists.",
 };
 
 export default function RootLayout({
