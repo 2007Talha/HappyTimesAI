@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   PieChart,
   Plus,
+  Coins,
 } from 'lucide-react';
 import type { BudgetPlan, BudgetCategory } from '@/schemas/eventSchemas';
 import {
@@ -45,7 +46,6 @@ export function BudgetTracker({
 
   const totalCents = dollarsToCents(budgetPlan.totalBudget);
 
-  // Convert categories to the internal BudgetCategory shape for calculations
   const internalCategories = budgetPlan.categories.map((c) => ({
     name: c.name,
     estimatedCents: dollarsToCents(c.estimatedAmount),
@@ -124,32 +124,36 @@ export function BudgetTracker({
   return (
     <section aria-labelledby={`${componentId}-budget-heading`} className="space-y-6">
       {/* Header with KPI cards & Export */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <h2 id={`${componentId}-budget-heading`} className="text-xl font-black text-slate-900 dark:text-slate-50 flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
-            Dynamic Budget Engine
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+            Penny-Accurate Arithmetic
+          </span>
+          <h2 id={`${componentId}-budget-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
+            <Coins className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+            Dynamic Budget Allocation
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Penny-accurate allocations, slider lock-rebalancing, and variance audit.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Lock priority categories to auto-rebalance remaining splits. Largest-remainder penny accuracy.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => setShowAddCategory(!showAddCategory)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
           >
-            <Plus className="w-4 h-4" aria-hidden="true" />
+            <Plus className="w-3.5 h-3.5" aria-hidden="true" />
             Add Category
           </button>
           <button
             type="button"
             onClick={handleExportCsv}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-[#6842ed] hover:bg-[#5733dd] text-white shadow-sm transition-colors cursor-pointer"
             aria-label="Export budget to CSV"
           >
-            <Download className="w-4 h-4" aria-hidden="true" />
+            <Download className="w-3.5 h-3.5" aria-hidden="true" />
             Export CSV
           </button>
         </div>
@@ -162,63 +166,63 @@ export function BudgetTracker({
           : `Budget on track. $${(budgetPlan.totalBudget - totalActualDollars).toLocaleString()} remaining.`}
       </div>
 
-      {/* Summary KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Total Cap</span>
-          <span className="text-xl font-black text-slate-900 dark:text-slate-50 mt-1 block">
+      {/* Summary KPI Cards — Styled in clean modern pastel tints */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Total Cap</span>
+          <span className="text-2xl font-bold text-[#1c192b] font-editorial mt-1 block">
             ${budgetPlan.totalBudget.toLocaleString()}
           </span>
-          <span className="text-xs text-slate-400">Baseline Budget</span>
+          <span className="text-xs text-slate-500">Planned Ceiling</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Allocated</span>
-          <span className="text-xl font-black text-slate-900 dark:text-slate-50 mt-1 block">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Allocated</span>
+          <span className="text-2xl font-bold text-[#6842ed] font-editorial mt-1 block">
             ${Math.round(totalEstimatedDollars).toLocaleString()}
           </span>
-          <span className="text-xs text-slate-400">Sum of Categories</span>
+          <span className="text-xs text-slate-500">100.00% Categories</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Actual Spent</span>
-          <span className={`text-xl font-black mt-1 block ${totalActualDollars > budgetPlan.totalBudget ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-slate-50'}`}>
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Logged Outlays</span>
+          <span className={`text-2xl font-bold font-editorial mt-1 block ${totalActualDollars > budgetPlan.totalBudget ? 'text-[#d93856]' : 'text-[#1c192b]'}`}>
             ${Math.round(totalActualDollars).toLocaleString()}
           </span>
-          <span className="text-xs text-slate-400">Logged Outlays</span>
+          <span className="text-xs text-slate-500">Actual Outlays</span>
         </div>
 
-        <div className={`p-4 rounded-xl border ${isOverallOverBudget ? 'bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900' : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900'}`}>
-          <span className="text-xs font-semibold uppercase tracking-wider block text-slate-600 dark:text-slate-300">Variance</span>
-          <span className={`text-xl font-black mt-1 block flex items-center gap-1.5 ${isOverallOverBudget ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+        <div className={`p-5 rounded-2xl border ${isOverallOverBudget ? 'bg-[#fff5f6] border-[#fde4e6]' : 'bg-[#f0fbf5] border-[#d8f5e5]'}`}>
+          <span className="text-[11px] font-bold uppercase tracking-wider block text-slate-500">Remaining</span>
+          <span className={`text-2xl font-bold font-editorial mt-1 block flex items-center gap-1.5 ${isOverallOverBudget ? 'text-[#d93856]' : 'text-[#147a46]'}`}>
             {isOverallOverBudget ? (
               <>
                 <AlertTriangle className="w-5 h-5 shrink-0" aria-hidden="true" />
-                +${Math.abs(Math.round(totalVarianceDollars)).toLocaleString()}
+                -${Math.abs(Math.round(totalActualDollars - budgetPlan.totalBudget)).toLocaleString()}
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-5 h-5 shrink-0" aria-hidden="true" />
-                ${Math.abs(Math.round(budgetPlan.totalBudget - totalActualDollars)).toLocaleString()} left
+                ${Math.abs(Math.round(budgetPlan.totalBudget - totalActualDollars)).toLocaleString()}
               </>
             )}
           </span>
-          <span className="text-xs opacity-75">{isOverallOverBudget ? 'Over Cap' : 'Within Budget'}</span>
+          <span className="text-xs opacity-75">{isOverallOverBudget ? 'Over Cap Warning' : 'Safe Margin'}</span>
         </div>
       </div>
 
       {/* Add Category Form Dropdown */}
       {showAddCategory && (
-        <form onSubmit={handleAddCategory} className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-wrap items-center gap-3">
+        <form onSubmit={handleAddCategory} className="p-5 bg-[#f8f7ff] rounded-2xl border border-[#ece8ff] flex flex-wrap items-center gap-3">
           <input
             type="text"
             placeholder="Category Name"
             value={newCatName}
             onChange={(e) => setNewCatName(e.target.value)}
-            className="flex-1 min-w-[160px] px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+            className="flex-1 min-w-[180px] px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white"
             required
           />
-          <div className="flex items-center gap-1 text-sm font-medium">
+          <div className="flex items-center gap-1 text-sm font-medium text-slate-600">
             <span>Share:</span>
             <input
               type="number"
@@ -226,13 +230,13 @@ export function BudgetTracker({
               max="50"
               value={newCatPercent}
               onChange={(e) => setNewCatPercent(Number(e.target.value))}
-              className="w-16 px-2 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+              className="w-16 px-2.5 py-2 text-sm rounded-xl border border-slate-200 bg-white"
             />
             <span>%</span>
           </div>
           <button
             type="submit"
-            className="px-4 py-1.5 text-xs font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            className="px-5 py-2 text-xs font-bold bg-[#6842ed] text-white rounded-full hover:bg-[#5733dd]"
           >
             Save Category
           </button>
@@ -250,37 +254,37 @@ export function BudgetTracker({
             <div
               key={cat.name}
               role="listitem"
-              className={`p-4 rounded-xl border transition-all ${
+              className={`p-5 rounded-2xl border transition-all ${
                 isCategoryOver
-                  ? 'border-rose-300 dark:border-rose-900/60 bg-rose-50/40 dark:bg-rose-950/20'
-                  : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300'
+                  ? 'border-[#fdd8de] bg-[#fffbfb]'
+                  : 'border-slate-200/80 bg-white hover:border-slate-300 shadow-2xs'
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
                 {/* Category Name & Lock Button */}
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => toggleLock(idx)}
-                    className={`p-1.5 rounded-lg border transition-colors ${
+                    className={`p-2 rounded-xl border transition-colors cursor-pointer ${
                       cat.isLocked
-                        ? 'bg-amber-100 border-amber-300 text-amber-800 dark:bg-amber-950/60 dark:border-amber-800 dark:text-amber-300'
-                        : 'bg-slate-100 border-slate-200 text-slate-500 hover:text-slate-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'
+                        ? 'bg-[#fff8ea] border-[#fde8be] text-[#b47818]'
+                        : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-slate-600'
                     }`}
-                    aria-label={cat.isLocked ? `Unlock ${cat.name} category from rebalancing` : `Lock ${cat.name} category`}
+                    aria-label={cat.isLocked ? `Unlock ${cat.name}` : `Lock ${cat.name}`}
                   >
                     {cat.isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
                   </button>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-[#1c192b] flex items-center gap-2">
                       {cat.name}
                       {cat.isLocked && (
-                        <span className="text-[10px] font-semibold bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-bold bg-[#fff8ea] text-[#b47818] border border-[#fde8be] px-2 py-0.5 rounded-full">
                           LOCKED
                         </span>
                       )}
                     </h3>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                    <span className="text-xs text-slate-500">
                       Target: ${Math.round(cat.estimatedAmount).toLocaleString()} ({cat.percentage.toFixed(1)}%)
                     </span>
                   </div>
@@ -290,7 +294,7 @@ export function BudgetTracker({
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <label htmlFor={`${inputId}-actual`} className="text-xs text-slate-500 font-medium">
-                      Actual:
+                      Spent:
                     </label>
                     <div className="relative">
                       <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400">$</span>
@@ -301,7 +305,7 @@ export function BudgetTracker({
                         value={cat.actualSpent || ''}
                         onChange={(e) => handleActualSpendChange(idx, Number(e.target.value))}
                         placeholder="0"
-                        className="w-24 pl-5 pr-2 py-1 text-xs font-semibold rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                        className="w-24 pl-5 pr-2 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-[#fafbfe] text-[#1c192b] focus:bg-white focus:border-[#6842ed]"
                         aria-label={`Actual spend for ${cat.name}`}
                       />
                     </div>
@@ -309,12 +313,12 @@ export function BudgetTracker({
 
                   {/* Variance Badge */}
                   <span
-                    className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${
+                    className={`text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap ${
                       cat.actualSpent === 0
-                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+                        ? 'bg-slate-100 text-slate-500'
                         : isCategoryOver
-                        ? 'bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300'
-                        : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
+                        ? 'bg-[#fff0f2] text-[#d93856] border border-[#ffd5dc]'
+                        : 'bg-[#f0fbf5] text-[#127242] border border-[#d8f5e5]'
                     }`}
                   >
                     {cat.actualSpent === 0
@@ -329,8 +333,8 @@ export function BudgetTracker({
               {/* Allocation Slider */}
               <div className="mt-3">
                 <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
-                  <span>Allocation Percentage</span>
-                  <span className="font-mono">{cat.percentage.toFixed(1)}%</span>
+                  <span>Rebalance Allocation</span>
+                  <span className="font-mono text-[#6842ed] font-semibold">{cat.percentage.toFixed(1)}%</span>
                 </div>
                 <input
                   type="range"
@@ -340,7 +344,7 @@ export function BudgetTracker({
                   disabled={cat.isLocked}
                   value={cat.percentage}
                   onChange={(e) => handlePercentageChange(idx, parseFloat(e.target.value))}
-                  className="w-full accent-indigo-600 disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
+                  className="w-full cursor-pointer disabled:cursor-not-allowed h-2 bg-slate-100 rounded-lg appearance-none"
                   aria-label={`Percentage slider for ${cat.name}`}
                 />
               </div>
@@ -351,4 +355,3 @@ export function BudgetTracker({
     </section>
   );
 }
-

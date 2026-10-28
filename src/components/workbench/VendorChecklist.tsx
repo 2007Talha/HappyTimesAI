@@ -13,12 +13,9 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronUp,
-  Tag,
-  DollarSign,
   Plus,
-  Filter,
-  CheckCircle2,
   AlertCircle,
+  Briefcase,
 } from 'lucide-react';
 import type { VendorItem } from '@/schemas/eventSchemas';
 
@@ -40,13 +37,11 @@ export function VendorChecklist({
   const [statusFilter, setStatusFilter] = useState<'all' | 'booked' | 'pending'>('all');
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // New vendor form state
   const [newName, setNewName] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [newPriority, setNewPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [newCost, setNewCost] = useState(0);
 
-  // Sync from localStorage if present
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -129,13 +124,16 @@ export function VendorChecklist({
   return (
     <section aria-labelledby={`${componentId}-vendor-heading`} className="space-y-6">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <h2 id={`${componentId}-vendor-heading`} className="text-xl font-black text-slate-900 dark:text-slate-50 flex items-center gap-2">
-            <CheckSquare className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+            Procurement & Due-Diligence
+          </span>
+          <h2 id={`${componentId}-vendor-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
             Vendor Due-Diligence Checklist
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Prioritized procurement tracker with pre-loaded interviewer questions & contract checks.
           </p>
         </div>
@@ -143,65 +141,65 @@ export function VendorChecklist({
         <button
           type="button"
           onClick={() => setShowAddForm(!showAddForm)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-[#6842ed] hover:bg-[#5733dd] text-white transition-colors cursor-pointer self-start sm:self-auto shadow-2xs"
         >
-          <Plus className="w-4 h-4" aria-hidden="true" />
+          <Plus className="w-3.5 h-3.5" aria-hidden="true" />
           Add Vendor
         </button>
       </div>
 
       {/* KPI Stats Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Booked Status</span>
-          <span className="text-lg font-black text-slate-900 dark:text-slate-100 mt-0.5 block">
-            {bookedCount} of {vendors.length} Booked
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Booked Status</span>
+          <span className="text-2xl font-bold font-editorial text-[#1c192b] mt-1 block">
+            {bookedCount} of {vendors.length} Finalized
           </span>
-          <span className="text-xs text-slate-400">
-            {Math.round((bookedCount / (vendors.length || 1)) * 100)}% finalized
+          <span className="text-xs text-slate-500">
+            {Math.round((bookedCount / (vendors.length || 1)) * 100)}% under contract
           </span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Estimated Total</span>
-          <span className="text-lg font-black text-slate-900 dark:text-slate-100 mt-0.5 block">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Target Total</span>
+          <span className="text-2xl font-bold font-editorial text-[#1c192b] mt-1 block">
             ${totalCost.toLocaleString()}
           </span>
-          <span className="text-xs text-slate-400">All vendor targets</span>
+          <span className="text-xs text-slate-500">All vendor targets</span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 col-span-2 sm:col-span-1">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Committed Spend</span>
-          <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">
+        <div className="p-5 rounded-2xl bg-[#f0fbf5] border border-[#d8f5e5] col-span-2 sm:col-span-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider block text-slate-500">Committed Outlay</span>
+          <span className="text-2xl font-bold font-editorial text-[#127242] mt-1 block">
             ${bookedCost.toLocaleString()}
           </span>
-          <span className="text-xs text-slate-400">Under contract</span>
+          <span className="text-xs text-[#127242]/80">Confirmed contracts</span>
         </div>
       </div>
 
       {/* Add Vendor Form Dropdown */}
       {showAddForm && (
-        <form onSubmit={handleAddVendor} className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <form onSubmit={handleAddVendor} className="p-5 bg-[#f8f7ff] rounded-2xl border border-[#ece8ff] grid grid-cols-1 sm:grid-cols-4 gap-3">
           <input
             type="text"
-            placeholder="Vendor Name (e.g. DJ Soundwave)"
+            placeholder="Vendor Name (e.g. Acoustic Duo)"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+            className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-white"
             required
           />
           <input
             type="text"
-            placeholder="Category (e.g. Entertainment)"
+            placeholder="Category (e.g. Music)"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            className="px-3 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+            className="px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-white"
           />
           <div className="flex gap-2">
             <select
               value={newPriority}
               onChange={(e) => setNewPriority(e.target.value as 'high' | 'medium' | 'low')}
-              className="flex-1 px-2 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+              className="flex-1 px-2.5 py-2 text-xs rounded-xl border border-slate-200 bg-white"
             >
               <option value="high">High Priority</option>
               <option value="medium">Medium Priority</option>
@@ -212,12 +210,12 @@ export function VendorChecklist({
               placeholder="Est $"
               value={newCost || ''}
               onChange={(e) => setNewCost(Number(e.target.value))}
-              className="w-20 px-2 py-1.5 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+              className="w-20 px-2.5 py-2 text-xs rounded-xl border border-slate-200 bg-white"
             />
           </div>
           <button
             type="submit"
-            className="px-4 py-1.5 text-xs font-bold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
+            className="px-4 py-2 text-xs font-bold bg-[#6842ed] text-white rounded-full hover:bg-[#5733dd] cursor-pointer"
           >
             Add to Checklist
           </button>
@@ -227,16 +225,16 @@ export function VendorChecklist({
       {/* Filters Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-slate-500">Status:</span>
+          <span className="font-bold text-slate-400">Status:</span>
           {(['all', 'pending', 'booked'] as const).map((st) => (
             <button
               key={st}
               type="button"
               onClick={() => setStatusFilter(st)}
-              className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer ${
+              className={`px-3 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
                 statusFilter === st
-                  ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                  ? 'bg-[#1c192b] text-white'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
               }`}
             >
               {st.charAt(0).toUpperCase() + st.slice(1)}
@@ -245,16 +243,16 @@ export function VendorChecklist({
         </div>
 
         <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-slate-500">Priority:</span>
+          <span className="font-bold text-slate-400">Priority:</span>
           {(['all', 'high', 'medium', 'low'] as const).map((pr) => (
             <button
               key={pr}
               type="button"
               onClick={() => setPriorityFilter(pr)}
-              className={`px-2.5 py-1 rounded-full font-medium transition-colors cursor-pointer ${
+              className={`px-3 py-1 rounded-full font-semibold transition-colors cursor-pointer ${
                 priorityFilter === pr
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+                  ? 'bg-[#6842ed] text-white'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
               }`}
             >
               {pr.charAt(0).toUpperCase() + pr.slice(1)}
@@ -269,58 +267,58 @@ export function VendorChecklist({
           const isExpanded = expandedVendorId === vendor.id;
           const priorityStyles =
             vendor.priority === 'high'
-              ? 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300'
+              ? 'bg-[#fff0f2] text-[#d93856] border border-[#ffd5dc]'
               : vendor.priority === 'medium'
-              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
-              : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+              ? 'bg-[#fff8ea] text-[#b47818] border border-[#fde8be]'
+              : 'bg-slate-100 text-slate-600 border border-slate-200';
 
           return (
             <article
               key={vendor.id}
               role="listitem"
-              className={`rounded-xl border transition-all ${
+              className={`rounded-2xl border transition-all ${
                 vendor.isChecked
-                  ? 'bg-slate-50/60 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 opacity-75'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm'
+                  ? 'bg-slate-50/70 border-slate-200 opacity-75'
+                  : 'bg-white border-slate-200/90 hover:border-slate-300 shadow-2xs'
               }`}
             >
-              <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 {/* Left check and title */}
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-3.5">
                   <button
                     type="button"
                     onClick={() => toggleVendorStatus(vendor.id)}
-                    className="mt-0.5 text-indigo-600 dark:text-indigo-400 hover:scale-110 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 rounded"
+                    className="mt-0.5 text-[#6842ed] hover:scale-110 transition-transform cursor-pointer"
                     aria-label={`Mark ${vendor.name} as ${vendor.isChecked ? 'pending' : 'booked'}`}
                   >
                     {vendor.isChecked ? (
-                      <CheckSquare className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <CheckSquare className="w-5 h-5 text-[#127242]" />
                     ) : (
-                      <Square className="w-5 h-5 text-slate-400" />
+                      <Square className="w-5 h-5 text-slate-300" />
                     )}
                   </button>
 
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h3 className={`text-sm font-bold ${vendor.isChecked ? 'line-through text-slate-400' : 'text-slate-900 dark:text-slate-100'}`}>
+                      <h3 className={`text-sm font-bold ${vendor.isChecked ? 'line-through text-slate-400' : 'text-[#1c192b]'}`}>
                         {vendor.name}
                       </h3>
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${priorityStyles}`}>
                         {vendor.priority}
                       </span>
-                      <span className="text-[11px] text-slate-500 font-medium bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                      <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
                         {vendor.category}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                      {vendor.notes || 'No notes specified'}
+                    <p className="text-xs text-slate-500 mt-1">
+                      {vendor.notes || 'Standard agreement check'}
                     </p>
                   </div>
                 </div>
 
                 {/* Right cost & interview dropdown */}
                 <div className="flex items-center gap-3 self-end sm:self-center">
-                  <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                  <span className="text-xs font-mono font-bold text-slate-700">
                     ${vendor.estimatedCost.toLocaleString()}
                   </span>
 
@@ -328,9 +326,8 @@ export function VendorChecklist({
                     <button
                       type="button"
                       onClick={() => toggleQuestions(vendor.id)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-600 cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#f1effd] hover:bg-[#e7e3fc] text-[#6842ed] text-xs font-semibold transition-colors cursor-pointer"
                       aria-expanded={isExpanded}
-                      aria-label={`Questions to ask ${vendor.name}`}
                     >
                       <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>{vendor.questionsToAsk.length} Interview Qs</span>
@@ -342,15 +339,15 @@ export function VendorChecklist({
 
               {/* Collapsible Questions Panel */}
               {isExpanded && vendor.questionsToAsk && (
-                <div className="px-4 pb-4 pt-1 border-t border-slate-100 dark:border-slate-800/80 bg-indigo-50/40 dark:bg-indigo-950/20 rounded-b-xl">
-                  <h4 className="text-xs font-bold text-indigo-950 dark:text-indigo-200 mb-2 flex items-center gap-1.5">
-                    <AlertCircle className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
-                    Essential Due-Diligence Questions to Ask:
+                <div className="px-5 pb-5 pt-3 border-t border-slate-100 bg-[#f8f7ff] rounded-b-2xl">
+                  <h4 className="text-xs font-bold text-[#1c192b] mb-2 flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 text-[#6842ed]" aria-hidden="true" />
+                    Essential Due-Diligence & Interview Inquiries:
                   </h4>
                   <ul className="space-y-1.5">
                     {vendor.questionsToAsk.map((q, idx) => (
-                      <li key={idx} className="text-xs text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                        <span className="text-indigo-500 font-bold">•</span>
+                      <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                        <span className="text-[#6842ed] font-bold">•</span>
                         <span>{q}</span>
                       </li>
                     ))}
@@ -364,4 +361,3 @@ export function VendorChecklist({
     </section>
   );
 }
-

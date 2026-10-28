@@ -3,21 +3,19 @@
 /**
  * @fileoverview Personalized Creative Ideas Studio component.
  * Displays tailored theme concepts, decor inspirations, signature experiences,
- * sustainability practices, and inclusivity tips.
+ * sustainability practices, and inclusivity tips in airy, modern pastel cards.
  */
 
 import React, { useState, useId } from 'react';
 import {
   Sparkles,
-  Heart,
   Palette,
   Utensils,
   Smile,
   Leaf,
   Users,
-  Tag,
   Star,
-  Check,
+  Compass,
 } from 'lucide-react';
 import type { Idea } from '@/schemas/eventSchemas';
 
@@ -27,37 +25,43 @@ interface IdeaGalleryProps {
 
 const CATEGORY_CONFIG: Record<
   string,
-  { label: string; icon: React.ReactNode; color: string }
+  { label: string; icon: React.ReactNode; badgeStyle: string; cardStyle: string }
 > = {
   theme: {
     label: 'Theme & Concept',
-    icon: <Palette className="w-4 h-4" />,
-    color: 'bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300',
+    icon: <Palette className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#f1effd] text-[#6842ed] border border-[#e1ddfa]',
+    cardStyle: 'border-slate-200/90 hover:border-[#6842ed]/40 bg-white',
   },
   decor: {
     label: 'Decor & Ambiance',
-    icon: <Sparkles className="w-4 h-4" />,
-    color: 'bg-pink-100 text-pink-800 dark:bg-pink-950/80 dark:text-pink-300',
+    icon: <Sparkles className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#fff5f6] text-[#b8233f] border border-[#fde4e6]',
+    cardStyle: 'border-slate-200/90 hover:border-[#b8233f]/40 bg-white',
   },
   menu: {
     label: 'Menu & Culinary',
-    icon: <Utensils className="w-4 h-4" />,
-    color: 'bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300',
+    icon: <Utensils className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#fffbf0] text-[#a66a07] border border-[#faeed0]',
+    cardStyle: 'border-slate-200/90 hover:border-[#a66a07]/40 bg-white',
   },
   activity: {
     label: 'Activities & Fun',
-    icon: <Smile className="w-4 h-4" />,
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-950/80 dark:text-blue-300',
+    icon: <Smile className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#eff6ff] text-[#1d4ed8] border border-[#dbeafe]',
+    cardStyle: 'border-slate-200/90 hover:border-[#1d4ed8]/40 bg-white',
   },
   sustainability: {
     label: 'Eco & Sustainability',
-    icon: <Leaf className="w-4 h-4" />,
-    color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300',
+    icon: <Leaf className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#f0fbf5] text-[#147a46] border border-[#d8f5e5]',
+    cardStyle: 'border-slate-200/90 hover:border-[#147a46]/40 bg-white',
   },
   inclusivity: {
     label: 'Inclusivity & Access',
-    icon: <Users className="w-4 h-4" />,
-    color: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950/80 dark:text-indigo-300',
+    icon: <Users className="w-3.5 h-3.5" />,
+    badgeStyle: 'bg-[#faf5ff] text-[#7e22ce] border border-[#f3e8ff]',
+    cardStyle: 'border-slate-200/90 hover:border-[#7e22ce]/40 bg-white',
   },
 };
 
@@ -87,36 +91,39 @@ export function IdeaGallery({ initialIdeas }: IdeaGalleryProps): React.JSX.Eleme
   return (
     <section aria-labelledby={`${componentId}-ideas-heading`} className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <h2 id={`${componentId}-ideas-heading`} className="text-xl font-black text-slate-900 dark:text-slate-50 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
-            Personalized Creative Studio
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+            Tailored Ideation Studio
+          </span>
+          <h2 id={`${componentId}-ideas-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
+            <Compass className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+            Curated Themes, Menus & Signature Moments
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            AI-curated sensory experiences, theme styling, dietary menus, eco-practices, and inclusivity blueprints.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Sensory concepts, dietary accommodations, guest engagement, and sustainability practices.
           </p>
         </div>
 
         {savedIdeaIds.size > 0 && (
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200 self-start sm:self-auto flex items-center gap-1.5">
-            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+          <span className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#fff8ea] text-[#b47818] border border-[#fde8be] self-start sm:self-auto flex items-center gap-1.5 shadow-2xs">
+            <Star className="w-3.5 h-3.5 fill-[#b47818] text-[#b47818]" />
             {savedIdeaIds.size} Shortlisted Ideas
           </span>
         )}
       </div>
 
       {/* Category Filter Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1" role="toolbar" aria-label="Filter ideas by category">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1" role="toolbar">
         {categories.map(({ key, label }) => (
           <button
             key={key}
             type="button"
             onClick={() => setSelectedCategory(key)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
+            className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
               selectedCategory === key
-                ? 'bg-indigo-600 text-white shadow-sm'
-                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                ? 'bg-[#6842ed] text-white shadow-2xs'
+                : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
             }`}
           >
             {label}
@@ -124,8 +131,8 @@ export function IdeaGallery({ initialIdeas }: IdeaGalleryProps): React.JSX.Eleme
         ))}
       </div>
 
-      {/* Ideas Card Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" role="list">
+      {/* Ideas Card Grid — Styled like the 3 pastel cards in reference photo */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" role="list">
         {filteredIdeas.map((idea) => {
           const config = CATEGORY_CONFIG[idea.category] || CATEGORY_CONFIG.theme;
           const isSaved = savedIdeaIds.has(idea.id);
@@ -134,46 +141,44 @@ export function IdeaGallery({ initialIdeas }: IdeaGalleryProps): React.JSX.Eleme
             <article
               key={idea.id}
               role="listitem"
-              className={`p-5 rounded-2xl border flex flex-col justify-between transition-all ${
-                isSaved
-                  ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-300 dark:border-amber-800 shadow-sm'
-                  : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
+              className={`p-6 rounded-2xl border transition-all flex flex-col justify-between shadow-2xs ${config.cardStyle} ${
+                isSaved ? 'ring-2 ring-[#b47818] bg-[#fffdf8]' : ''
               }`}
             >
               <div>
                 {/* Top Badge & Favorite Button */}
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold ${config.color}`}>
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold ${config.badgeStyle}`}>
                     {config.icon}
                     {config.label}
                   </span>
                   <button
                     type="button"
                     onClick={() => toggleSaveIdea(idea.id)}
-                    className="p-1 rounded-md text-slate-400 hover:text-amber-500 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-amber-500"
+                    className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#b47818] transition-colors cursor-pointer"
                     aria-label={isSaved ? `Remove ${idea.title} from shortlist` : `Save ${idea.title} to shortlist`}
                   >
                     <Star
-                      className={`w-4 h-4 ${isSaved ? 'fill-amber-500 text-amber-500' : ''}`}
+                      className={`w-4 h-4 ${isSaved ? 'fill-[#b47818] text-[#b47818]' : ''}`}
                     />
                   </button>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1.5">
+                <h3 className="font-editorial text-lg font-bold text-[#1c192b] mb-1.5">
                   {idea.title}
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   {idea.description}
                 </p>
               </div>
 
               {/* Bottom Tags & Cost */}
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+              <div className="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2">
                 <div className="flex flex-wrap gap-1">
                   {idea.tags.slice(0, 3).map((tag, i) => (
                     <span
                       key={i}
-                      className="text-[10px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full"
+                      className="text-[10px] text-slate-500 bg-[#f7f8fc] border border-slate-200/80 px-2 py-0.5 rounded-full font-medium"
                     >
                       #{tag}
                     </span>
@@ -181,7 +186,7 @@ export function IdeaGallery({ initialIdeas }: IdeaGalleryProps): React.JSX.Eleme
                 </div>
 
                 {idea.estimatedCost !== undefined && idea.estimatedCost > 0 && (
-                  <span className="text-xs font-mono font-bold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                  <span className="text-xs font-mono font-bold text-[#6842ed] whitespace-nowrap">
                     ~${idea.estimatedCost.toLocaleString()}
                   </span>
                 )}
@@ -193,4 +198,3 @@ export function IdeaGallery({ initialIdeas }: IdeaGalleryProps): React.JSX.Eleme
     </section>
   );
 }
-

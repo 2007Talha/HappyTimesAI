@@ -14,7 +14,6 @@ import {
   Circle,
   Download,
   Printer,
-  ChevronRight,
   Filter,
   User,
   MapPin,
@@ -62,7 +61,6 @@ export function TimelineRoadmap({
     }
   };
 
-  // Extract distinct categories
   const categories = ['all', ...Array.from(new Set(milestones.map((m) => m.category).filter(Boolean)))];
 
   const filteredMilestones = milestones
@@ -75,53 +73,54 @@ export function TimelineRoadmap({
   return (
     <section aria-labelledby={`${componentId}-timeline-heading`} className="space-y-6">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <h2 id={`${componentId}-timeline-heading`} className="text-xl font-black text-slate-900 dark:text-slate-50 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
-            Dual Chronological Engine
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+            Dual Chronological Cadence
+          </span>
+          <h2 id={`${componentId}-timeline-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+            Milestones & Run-of-Show
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Pre-event backward countdown roadmap + Day-of minute-by-minute run-of-show.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Backward countdown from target date + minute-by-minute execution schedule.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={handleExportIcs}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950/60 dark:hover:bg-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-[#f1effd] hover:bg-[#e6e2fc] text-[#6842ed] border border-[#ded8f9] transition-colors cursor-pointer"
             aria-label="Export schedule to iCalendar .ics"
           >
-            <Download className="w-4 h-4" aria-hidden="true" />
+            <Download className="w-3.5 h-3.5" aria-hidden="true" />
             Export .ICS
           </button>
           <button
             type="button"
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
             aria-label="Print schedule"
           >
-            <Printer className="w-4 h-4" aria-hidden="true" />
+            <Printer className="w-3.5 h-3.5" aria-hidden="true" />
             Print Schedule
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex gap-2" role="tablist" aria-label="Timeline views">
+      {/* Modern Floating Pill View Switcher */}
+      <div className="flex items-center justify-between gap-3 p-1.5 bg-[#f3f4f8] rounded-2xl">
+        <div className="flex gap-1.5" role="tablist">
           <button
             type="button"
             role="tab"
             aria-selected={activeTab === 'countdown'}
-            aria-controls={`${componentId}-countdown-panel`}
-            id={`${componentId}-countdown-tab`}
             onClick={() => setActiveTab('countdown')}
-            className={`pb-3 px-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
+            className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'countdown'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white text-[#6842ed] shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Pre-Event Roadmap ({completedCount}/{milestones.length})
@@ -130,13 +129,11 @@ export function TimelineRoadmap({
             type="button"
             role="tab"
             aria-selected={activeTab === 'dayOf'}
-            aria-controls={`${componentId}-dayof-panel`}
-            id={`${componentId}-dayof-tab`}
             onClick={() => setActiveTab('dayOf')}
-            className={`pb-3 px-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
+            className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'dayOf'
-                ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400'
-                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+                ? 'bg-white text-[#6842ed] shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             Day-Of Run-of-Show ({initialDayOfSchedule.length} Segments)
@@ -144,11 +141,11 @@ export function TimelineRoadmap({
         </div>
 
         {activeTab === 'countdown' && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500">Progress: {progressPercent}%</span>
-            <div className="w-24 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+          <div className="hidden sm:flex items-center gap-2 pr-2">
+            <span className="text-xs font-semibold text-slate-500">{progressPercent}% Completed</span>
+            <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-emerald-500 transition-all duration-300"
+                className="h-full bg-[#127242] transition-all duration-300"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -158,14 +155,9 @@ export function TimelineRoadmap({
 
       {/* Countdown Panel */}
       {activeTab === 'countdown' && (
-        <div
-          id={`${componentId}-countdown-panel`}
-          role="tabpanel"
-          aria-labelledby={`${componentId}-countdown-tab`}
-          className="space-y-4"
-        >
+        <div className="space-y-4">
           {/* Category Filter Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1" role="toolbar" aria-label="Filter milestones by category">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1" role="toolbar">
             <Filter className="w-3.5 h-3.5 text-slate-400 mr-1 shrink-0" aria-hidden="true" />
             {categories.map((cat) => (
               <button
@@ -174,8 +166,8 @@ export function TimelineRoadmap({
                 onClick={() => setCategoryFilter(cat)}
                 className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   categoryFilter === cat
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    ? 'bg-[#6842ed] text-white shadow-2xs'
+                    : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
                 }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
@@ -184,14 +176,14 @@ export function TimelineRoadmap({
           </div>
 
           {/* Milestones List */}
-          <ol className="relative border-l-2 border-indigo-200 dark:border-indigo-900/60 ml-4 space-y-4 my-2">
+          <ol className="relative border-l-2 border-[#e6e2fc] ml-4 space-y-4 my-2">
             {filteredMilestones.map((m) => (
               <li key={m.id} className="ml-6 group">
                 <span
                   className={`absolute -left-3.5 flex items-center justify-center w-7 h-7 rounded-full border-2 transition-colors cursor-pointer ${
                     m.isComplete
-                      ? 'bg-emerald-500 border-emerald-600 text-white'
-                      : 'bg-white dark:bg-slate-900 border-indigo-500 text-indigo-600'
+                      ? 'bg-[#127242] border-[#127242] text-white'
+                      : 'bg-white border-[#6842ed] text-[#6842ed]'
                   }`}
                   onClick={() => toggleMilestone(m.id)}
                   aria-hidden="true"
@@ -199,36 +191,36 @@ export function TimelineRoadmap({
                   {m.isComplete ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-3 h-3" />}
                 </span>
 
-                <article className={`p-4 rounded-xl border transition-all ${
+                <article className={`p-5 rounded-2xl border transition-all ${
                   m.isComplete
-                    ? 'bg-slate-50/70 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 opacity-70'
-                    : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 shadow-sm'
+                    ? 'bg-slate-50/70 border-slate-200 opacity-70'
+                    : 'bg-white border-slate-200/90 hover:border-slate-300 shadow-2xs'
                 }`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                     <button
                       type="button"
                       onClick={() => toggleMilestone(m.id)}
-                      className="text-left font-bold text-sm text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-600 rounded flex items-center gap-2 cursor-pointer"
+                      className="text-left font-bold text-sm text-[#1c192b] hover:text-[#6842ed] cursor-pointer"
                     >
                       <span className={m.isComplete ? 'line-through text-slate-400' : ''}>
                         {m.title}
                       </span>
                     </button>
-                    <span className="text-xs font-mono font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+                    <span className="text-xs font-mono font-semibold text-[#6842ed] whitespace-nowrap">
                       {m.daysBeforeEvent > 0 ? `T-${m.daysBeforeEvent} Days (${m.dueDate})` : `Day of Event (${m.dueDate})`}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2.5">
+                  <p className="text-xs text-slate-600 leading-relaxed mb-3">
                     {m.description}
                   </p>
 
-                  <div className="flex items-center gap-3 text-[11px] text-slate-500">
-                    <span className="flex items-center gap-1 font-medium bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">
+                  <div className="flex items-center gap-2.5 text-[11px] text-slate-500">
+                    <span className="flex items-center gap-1 font-medium bg-slate-100 px-2.5 py-0.5 rounded-full">
                       <User className="w-3 h-3" aria-hidden="true" />
                       {m.owner || 'Unassigned'}
                     </span>
-                    <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded font-medium">
+                    <span className="bg-[#f1effd] text-[#6842ed] px-2.5 py-0.5 rounded-full font-semibold border border-[#ded8f9]">
                       {m.category}
                     </span>
                   </div>
@@ -241,26 +233,21 @@ export function TimelineRoadmap({
 
       {/* Day-Of Schedule Panel */}
       {activeTab === 'dayOf' && (
-        <div
-          id={`${componentId}-dayof-panel`}
-          role="tabpanel"
-          aria-labelledby={`${componentId}-dayof-tab`}
-          className="space-y-3 print:space-y-2"
-        >
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-900 text-xs text-amber-800 dark:text-amber-200 flex items-center justify-between">
+        <div className="space-y-3">
+          <div className="p-4 bg-[#fffbf0] rounded-2xl border border-[#faeed0] text-xs text-[#a66a07] flex items-center justify-between">
             <span><strong>Target Date:</strong> {eventDate}</span>
-            <span>All times include safety buffer margins</span>
+            <span>All segments include buffer margins to absorb delays</span>
           </div>
 
-          <div className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <div className="divide-y divide-slate-100 bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
             {initialDayOfSchedule.map((item, idx) => (
               <article
                 key={item.id || idx}
-                className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                className="p-5 hover:bg-[#fafbfe] transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
-                <div className="flex items-start gap-3">
-                  <div className="min-w-[85px] py-1 px-2.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-900 text-center shrink-0">
-                    <span className="font-mono text-xs font-black text-indigo-700 dark:text-indigo-300 block">
+                <div className="flex items-start gap-4">
+                  <div className="min-w-[90px] py-2 px-3 rounded-xl bg-[#f1effd] border border-[#e2ddfa] text-center shrink-0">
+                    <span className="font-mono text-xs font-black text-[#6842ed] block">
                       {item.time}
                     </span>
                     <span className="text-[10px] text-slate-400 block">
@@ -269,19 +256,19 @@ export function TimelineRoadmap({
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                    <h3 className="text-sm font-bold text-[#1c192b]">
                       {item.activity}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-500 mt-1">
                       {item.notes}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 mt-2 text-[11px] text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-slate-400" aria-hidden="true" />
+                    <div className="flex flex-wrap items-center gap-3 mt-2 text-[11px] text-slate-400">
+                      <span className="flex items-center gap-1 text-slate-500">
+                        <MapPin className="w-3 h-3" />
                         {item.location || 'Venue'}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <User className="w-3 h-3 text-slate-400" aria-hidden="true" />
+                      <span className="flex items-center gap-1 text-slate-500">
+                        <User className="w-3 h-3" />
                         {item.owner || 'Lead'}
                       </span>
                     </div>
@@ -289,8 +276,8 @@ export function TimelineRoadmap({
                 </div>
 
                 {item.bufferMinutes > 0 && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300 self-start sm:self-center shrink-0">
-                    <Timer className="w-3 h-3" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 self-start sm:self-center shrink-0">
+                    <Timer className="w-3 h-3" />
                     +{item.bufferMinutes}m buffer
                   </span>
                 )}
@@ -302,4 +289,3 @@ export function TimelineRoadmap({
     </section>
   );
 }
-

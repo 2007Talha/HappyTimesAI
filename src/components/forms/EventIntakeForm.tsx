@@ -1,10 +1,8 @@
 'use client';
 
 /**
- * @fileoverview Event intake form with comprehensive validation.
- * Collects event type, budget, guests, date, location style, theme keywords,
- * dietary needs, cultural considerations, and additional notes.
- * Features 3 one-click demo presets for evaluator convenience.
+ * @fileoverview Event intake form with comprehensive validation and spacious modern styling.
+ * Designed with soft pastel preset cards, airy inputs, and clear visual hierarchy.
  */
 
 import React, { useState, useCallback, useId } from 'react';
@@ -17,50 +15,69 @@ import {
   UtensilsCrossed,
   Globe,
   FileText,
-  Zap,
   Heart,
   Cake,
   Building2,
+  ArrowRight,
+  Check,
 } from 'lucide-react';
 import type { EventIntake } from '@/schemas/eventSchemas';
 
-/** Props for EventIntakeForm */
 interface EventIntakeFormProps {
-  /** Callback when form is submitted with validated data */
   onSubmit: (data: EventIntake) => void;
-  /** Whether the form is currently submitting (disables inputs) */
   isLoading?: boolean;
 }
 
-/** Demo preset configuration */
 interface DemoPreset {
   label: string;
-  icon: React.ReactNode;
+  categoryTag: string;
+  badgeColor: string;
+  bgStyle: string;
+  borderStyle: string;
+  textColor: string;
   description: string;
+  highlights: string[];
   data: EventIntake;
 }
 
-/** Available event type options */
 const EVENT_TYPES = [
-  { value: 'wedding' as const, label: 'Wedding', icon: Heart },
-  { value: 'birthday' as const, label: 'Birthday', icon: Cake },
-  { value: 'community' as const, label: 'Community Event', icon: Building2 },
+  {
+    value: 'wedding' as const,
+    label: 'Wedding Celebration',
+    sub: 'Ceremony, reception, florals, photography & banquet',
+    icon: Heart,
+  },
+  {
+    value: 'birthday' as const,
+    label: 'Milestone Birthday',
+    sub: 'Party themes, custom cake, entertainment & music',
+    icon: Cake,
+  },
+  {
+    value: 'community' as const,
+    label: 'Community Gathering',
+    sub: 'Permits, staging, volunteer shifts, AV & sanitation',
+    icon: Building2,
+  },
 ];
 
-/** Location style options */
 const LOCATION_STYLES = [
-  { value: 'indoor' as const, label: 'Indoor' },
-  { value: 'outdoor' as const, label: 'Outdoor' },
-  { value: 'hybrid' as const, label: 'Hybrid (Indoor + Outdoor)' },
-  { value: 'virtual' as const, label: 'Virtual' },
+  { value: 'indoor' as const, label: 'Indoor Venue / Hall' },
+  { value: 'outdoor' as const, label: 'Open-Air / Park Grounds' },
+  { value: 'hybrid' as const, label: 'Hybrid (Indoor Hall + Outdoor Courtyard)' },
+  { value: 'virtual' as const, label: 'Virtual / Livestreamed Event' },
 ];
 
-/** Demo presets for one-click testing */
 const DEMO_PRESETS: DemoPreset[] = [
   {
-    label: 'Rustic Autumn Wedding — $28,000',
-    icon: <Heart className="w-4 h-4 text-rose-500" />,
-    description: '120 guests, hybrid venue, autumn theme',
+    label: 'Rustic Autumn Wedding',
+    categoryTag: 'WEDDING VERTICAL',
+    badgeColor: 'bg-[#fff5f6] text-[#c92a47] border border-[#fdd8de]',
+    bgStyle: 'bg-[#fff7f8]',
+    borderStyle: 'border-[#fde0e5]',
+    textColor: 'text-[#9b1c33]',
+    description: '120 guests with hybrid rustic barn layout and acoustic cocktail hour.',
+    highlights: ['Penny-accurate $28,000 budget split', 'T-180 pre-event timeline', '14-step day-of run-of-show'],
     data: {
       eventType: 'wedding',
       eventName: 'Sarah & James — Rustic Autumn Wedding',
@@ -75,9 +92,14 @@ const DEMO_PRESETS: DemoPreset[] = [
     },
   },
   {
-    label: 'Milestone 30th Birthday — $3,500',
-    icon: <Cake className="w-4 h-4 text-amber-500" />,
-    description: '40 guests, indoor arcade & lounge, retro vibe',
+    label: 'Milestone 30th Birthday',
+    categoryTag: 'BIRTHDAY VERTICAL',
+    badgeColor: 'bg-[#fffbf0] text-[#a66a07] border border-[#faeed0]',
+    bgStyle: 'bg-[#fffdf5]',
+    borderStyle: 'border-[#faeed0]',
+    textColor: 'text-[#875504]',
+    description: '40 guests in retro neon lounge with interactive DJ sets and custom cake.',
+    highlights: ['Zero-math cake & beverage splits', 'Hourly activity schedule', 'Custom decor procurement checklist'],
     data: {
       eventType: 'birthday',
       eventName: "Alex's Milestone 30th Birthday Bash",
@@ -92,9 +114,14 @@ const DEMO_PRESETS: DemoPreset[] = [
     },
   },
   {
-    label: 'Neighborhood Tech & Art Fair — $12,000',
-    icon: <Building2 className="w-4 h-4 text-emerald-500" />,
-    description: '500 attendees, community park, interactive exhibits',
+    label: 'Neighborhood Tech & Art Fair',
+    categoryTag: 'COMMUNITY VERTICAL',
+    badgeColor: 'bg-[#f0fbf5] text-[#147a46] border border-[#d8f5e5]',
+    bgStyle: 'bg-[#f5fdf8]',
+    borderStyle: 'border-[#dcf7e8]',
+    textColor: 'text-[#0d6337]',
+    description: '500 attendees with municipal permit compliance, staging, and sanitation.',
+    highlights: ['Permit & safety reserves', 'Volunteer coordinator shifts', 'Multilingual signage guides'],
     data: {
       eventType: 'community',
       eventName: 'Riverside Community Tech & Art Fair 2027',
@@ -115,11 +142,11 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
   const [formData, setFormData] = useState<EventIntake>({
     eventType: 'wedding',
     eventName: '',
-    totalBudget: 25000,
-    guestCount: 100,
-    eventDate: '2027-09-18',
+    totalBudget: 28000,
+    guestCount: 120,
+    eventDate: '2027-10-16',
     locationStyle: 'hybrid',
-    themeKeywords: ['elegant', 'romantic'],
+    themeKeywords: ['rustic', 'autumn', 'candlelight'],
     dietaryNeeds: ['vegetarian'],
     culturalConsiderations: [],
     additionalNotes: '',
@@ -129,6 +156,7 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
   const [dietaryInput, setDietaryInput] = useState('');
   const [culturalInput, setCulturalInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activePresetIndex, setActivePresetIndex] = useState<number | null>(0);
 
   const updateField = useCallback(<K extends keyof EventIntake>(
     field: K,
@@ -161,8 +189,9 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
     updateField(field, formData[field].filter((_, i) => i !== index));
   }, [formData, updateField]);
 
-  const applyPreset = useCallback((preset: DemoPreset) => {
+  const applyPreset = useCallback((preset: DemoPreset, idx: number) => {
     setFormData(preset.data);
+    setActivePresetIndex(idx);
     setErrors({});
   }, []);
 
@@ -184,96 +213,138 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
   }, [formData, onSubmit]);
 
   return (
-    <div className="space-y-6">
-      {/* Demo Presets Bar */}
-      <section aria-labelledby={`${formId}-presets-heading`} className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/40 dark:to-purple-950/40 rounded-2xl p-5 border border-indigo-200 dark:border-indigo-800 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h2 id={`${formId}-presets-heading`} className="text-sm font-bold text-indigo-950 dark:text-indigo-200 flex items-center gap-2 uppercase tracking-wider">
-            <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" aria-hidden="true" />
-            1-Click Evaluator Presets
-          </h2>
-          <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Instant Test Scenarios</span>
+    <div className="space-y-10">
+      {/* 3 Pastel Evaluator Preset Cards — Styled directly after reference screenshots */}
+      <section aria-labelledby={`${formId}-presets-heading`} className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+              Instant 1-Click Evaluation Scenarios
+            </span>
+            <h2 id={`${formId}-presets-heading`} className="text-xl font-bold text-[#1c192b] mt-1.5 font-editorial">
+              Explore Pre-Configured Domain Blueprints
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500 hidden sm:inline">
+            Select a preset to auto-populate the intake parameters
+          </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {DEMO_PRESETS.map((preset) => (
-            <button
-              key={preset.label}
-              type="button"
-              onClick={() => applyPreset(preset)}
-              disabled={isLoading}
-              className="flex items-start gap-3 p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-indigo-100 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md transition-all text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 disabled:opacity-50 group"
-              aria-label={`Load demo preset: ${preset.label}`}
-            >
-              <div className="p-2 rounded-lg bg-indigo-50 dark:bg-slate-800 group-hover:scale-105 transition-transform">
-                {preset.icon}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {DEMO_PRESETS.map((preset, idx) => {
+            const isSelected = activePresetIndex === idx;
+            return (
+              <div
+                key={preset.label}
+                className={`rounded-2xl p-6 border transition-all flex flex-col justify-between ${preset.bgStyle} ${preset.borderStyle} ${
+                  isSelected ? 'ring-2 ring-[#6842ed] shadow-md shadow-[#6842ed]/10' : 'hover:shadow-sm'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${preset.badgeColor}`}>
+                      {preset.categoryTag}
+                    </span>
+                    {isSelected && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#6842ed]">
+                        <Check className="w-3.5 h-3.5" /> Selected
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="font-editorial text-lg font-bold text-[#1c192b] mb-1">
+                    {preset.label}
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                    {preset.description}
+                  </p>
+
+                  <ul className="space-y-1.5 mb-5">
+                    {preset.highlights.map((h, i) => (
+                      <li key={i} className="text-[11px] text-slate-600 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#6842ed]/60" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => applyPreset(preset, idx)}
+                  disabled={isLoading}
+                  className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-white border border-slate-200 text-[#1c192b] hover:bg-[#6842ed] hover:text-white hover:border-[#6842ed] transition-all flex items-center justify-center gap-1.5 group cursor-pointer shadow-2xs"
+                  aria-label={`Load preset ${preset.label}`}
+                >
+                  <span>Apply This Scenario</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
-              <div className="min-w-0">
-                <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 block truncate">
-                  {preset.label}
-                </span>
-                <span className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">
-                  {preset.description}
-                </span>
-              </div>
-            </button>
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* Main Intake Form */}
-      <form onSubmit={handleSubmit} noValidate className="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+      {/* Main Intake Form Card */}
+      <form onSubmit={handleSubmit} noValidate className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/90 shadow-sm space-y-8">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50 tracking-tight">
-            Event Specifications
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
+            Step 1 • Event Specifications
+          </span>
+          <h2 className="text-3xl font-bold font-editorial text-[#171520] tracking-tight mt-2">
+            Configure Your Event Details
           </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-            Configure event parameters to synthesize custom budgets, dual timelines, vendor requirements, and creative ideas.
+          <p className="text-sm text-slate-500 mt-1">
+            Specify your guest counts, timeline constraints, aesthetic vibe, and special requirements.
           </p>
         </div>
 
-        {/* Event Type Radio Group */}
-        <fieldset>
-          <legend className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
-            Event Type <span className="text-rose-500" aria-hidden="true">*</span>
+        {/* Event Type Cards — Styled like the calendar selector in reference photo */}
+        <fieldset className="space-y-3">
+          <legend className="text-xs font-bold uppercase tracking-wider text-slate-600 block">
+            Choose Event Domain <span className="text-[#6842ed]">*</span>
           </legend>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" role="radiogroup">
-            {EVENT_TYPES.map(({ value, label, icon: Icon }) => (
-              <label
-                key={value}
-                className={`flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all focus-within:ring-2 focus-within:ring-indigo-500 ${
-                  formData.eventType === value
-                    ? 'border-indigo-600 bg-indigo-50/60 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-100 shadow-sm'
-                    : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="eventType"
-                  value={value}
-                  checked={formData.eventType === value}
-                  onChange={() => updateField('eventType', value)}
-                  className="sr-only"
-                  disabled={isLoading}
-                />
-                <Icon
-                  className={`w-5 h-5 ${
-                    formData.eventType === value
-                      ? 'text-indigo-600 dark:text-indigo-400'
-                      : 'text-slate-400'
+            {EVENT_TYPES.map(({ value, label, sub, icon: Icon }) => {
+              const isActive = formData.eventType === value;
+              return (
+                <label
+                  key={value}
+                  className={`flex flex-col p-5 rounded-2xl border transition-all cursor-pointer ${
+                    isActive
+                      ? 'border-[#6842ed] bg-[#f8f7ff] shadow-sm shadow-[#6842ed]/10'
+                      : 'border-slate-200 bg-white hover:border-slate-300'
                   }`}
-                  aria-hidden="true"
-                />
-                <span className="font-semibold text-sm">{label}</span>
-              </label>
-            ))}
+                >
+                  <input
+                    type="radio"
+                    name="eventType"
+                    value={value}
+                    checked={isActive}
+                    onChange={() => updateField('eventType', value)}
+                    className="sr-only"
+                    disabled={isLoading}
+                  />
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`p-2 rounded-xl ${isActive ? 'bg-[#6842ed] text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    {isActive && (
+                      <span className="w-2 h-2 rounded-full bg-[#6842ed]" />
+                    )}
+                  </div>
+                  <span className="font-bold text-sm text-[#1c192b] block">{label}</span>
+                  <span className="text-xs text-slate-500 mt-1 leading-snug">{sub}</span>
+                </label>
+              );
+            })}
           </div>
         </fieldset>
 
         {/* Event Name */}
-        <div>
-          <label htmlFor={`${formId}-name`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-            <FileText className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-            Event Name <span className="text-rose-500" aria-hidden="true">*</span>
+        <div className="space-y-1.5">
+          <label htmlFor={`${formId}-name`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            Event Title / Name <span className="text-[#6842ed]">*</span>
           </label>
           <input
             id={`${formId}-name`}
@@ -283,25 +354,21 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
             placeholder="e.g., Sarah & James — Rustic Autumn Wedding"
             disabled={isLoading}
             aria-invalid={!!errors.eventName}
-            aria-describedby={errors.eventName ? `${formId}-name-error` : undefined}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] placeholder-slate-400 focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm"
           />
           {errors.eventName && (
-            <p id={`${formId}-name-error`} className="text-rose-600 dark:text-rose-400 text-xs mt-1.5 font-medium" role="alert">
-              {errors.eventName}
-            </p>
+            <p className="text-[#d93856] text-xs font-medium mt-1">{errors.eventName}</p>
           )}
         </div>
 
         {/* Budget & Guests Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor={`${formId}-budget`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <DollarSign className="w-4 h-4 inline mr-1 text-slate-500" aria-hidden="true" />
-              Total Budget (USD) <span className="text-rose-500" aria-hidden="true">*</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="space-y-1.5">
+            <label htmlFor={`${formId}-budget`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Total Budget (USD) <span className="text-[#6842ed]">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
               <input
                 id={`${formId}-budget`}
                 type="number"
@@ -309,52 +376,43 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
                 step="50"
                 value={formData.totalBudget || ''}
                 onChange={(e) => updateField('totalBudget', Number(e.target.value))}
-                placeholder="25000"
+                placeholder="28000"
                 disabled={isLoading}
                 aria-invalid={!!errors.totalBudget}
-                aria-describedby={errors.totalBudget ? `${formId}-budget-error` : undefined}
-                className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+                className="w-full pl-8 pr-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] placeholder-slate-400 focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm font-medium"
               />
             </div>
             {errors.totalBudget && (
-              <p id={`${formId}-budget-error`} className="text-rose-600 dark:text-rose-400 text-xs mt-1.5 font-medium" role="alert">
-                {errors.totalBudget}
-              </p>
+              <p className="text-[#d93856] text-xs font-medium mt-1">{errors.totalBudget}</p>
             )}
           </div>
 
-          <div>
-            <label htmlFor={`${formId}-guests`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <Users className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-              Expected Guests <span className="text-rose-500" aria-hidden="true">*</span>
+          <div className="space-y-1.5">
+            <label htmlFor={`${formId}-guests`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Expected Guests <span className="text-[#6842ed]">*</span>
             </label>
             <input
               id={`${formId}-guests`}
               type="number"
               min="1"
-              step="1"
               value={formData.guestCount || ''}
               onChange={(e) => updateField('guestCount', Number(e.target.value))}
-              placeholder="100"
+              placeholder="120"
               disabled={isLoading}
               aria-invalid={!!errors.guestCount}
-              aria-describedby={errors.guestCount ? `${formId}-guests-error` : undefined}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] placeholder-slate-400 focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm font-medium"
             />
             {errors.guestCount && (
-              <p id={`${formId}-guests-error`} className="text-rose-600 dark:text-rose-400 text-xs mt-1.5 font-medium" role="alert">
-                {errors.guestCount}
-              </p>
+              <p className="text-[#d93856] text-xs font-medium mt-1">{errors.guestCount}</p>
             )}
           </div>
         </div>
 
         {/* Date & Location Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor={`${formId}-date`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <Calendar className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-              Event Date <span className="text-rose-500" aria-hidden="true">*</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="space-y-1.5">
+            <label htmlFor={`${formId}-date`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Event Date <span className="text-[#6842ed]">*</span>
             </label>
             <input
               id={`${formId}-date`}
@@ -363,27 +421,23 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
               onChange={(e) => updateField('eventDate', e.target.value)}
               disabled={isLoading}
               aria-invalid={!!errors.eventDate}
-              aria-describedby={errors.eventDate ? `${formId}-date-error` : undefined}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm font-medium"
             />
             {errors.eventDate && (
-              <p id={`${formId}-date-error`} className="text-rose-600 dark:text-rose-400 text-xs mt-1.5 font-medium" role="alert">
-                {errors.eventDate}
-              </p>
+              <p className="text-[#d93856] text-xs font-medium mt-1">{errors.eventDate}</p>
             )}
           </div>
 
-          <div>
-            <label htmlFor={`${formId}-location`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <MapPin className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-              Location Style
+          <div className="space-y-1.5">
+            <label htmlFor={`${formId}-location`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Venue / Location Setting
             </label>
             <select
               id={`${formId}-location`}
               value={formData.locationStyle}
               onChange={(e) => updateField('locationStyle', e.target.value as EventIntake['locationStyle'])}
               disabled={isLoading}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm font-medium"
             >
               {LOCATION_STYLES.map(({ value, label }) => (
                 <option key={value} value={value}>
@@ -395,10 +449,9 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
         </div>
 
         {/* Theme Keywords */}
-        <div>
-          <label htmlFor={`${formId}-theme`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-            <Sparkles className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-            Theme & Vibe Keywords
+        <div className="space-y-2">
+          <label htmlFor={`${formId}-theme`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            Aesthetic Themes & Vibe Keywords
           </label>
           <div className="flex gap-2">
             <input
@@ -412,34 +465,32 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
                   addTag('themeKeywords', themeInput, setThemeInput);
                 }
               }}
-              placeholder="e.g. vintage, bohemian, cyber, cozy (press Enter)"
+              placeholder="e.g. vintage, bohemian, candlelight (press Enter)"
               disabled={isLoading}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+              className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] placeholder-slate-400 focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm"
             />
             <button
               type="button"
               onClick={() => addTag('themeKeywords', themeInput, setThemeInput)}
               disabled={isLoading || !themeInput.trim()}
-              className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer disabled:opacity-50"
             >
               Add
             </button>
           </div>
           {formData.themeKeywords.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2.5" role="list" aria-label="Selected theme keywords">
+            <div className="flex flex-wrap gap-2 pt-1">
               {formData.themeKeywords.map((tag, i) => (
                 <span
-                  key={`${tag}-${i}`}
-                  role="listitem"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 text-xs font-medium border border-indigo-200 dark:border-indigo-800"
+                  key={i}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f1effd] text-[#6842ed] text-xs font-semibold border border-[#e1ddfa]"
                 >
                   #{tag}
                   <button
                     type="button"
                     onClick={() => removeTag('themeKeywords', i)}
-                    disabled={isLoading}
-                    className="hover:text-indigo-900 dark:hover:text-indigo-100 rounded-full focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500"
-                    aria-label={`Remove keyword ${tag}`}
+                    className="hover:text-[#4b27cc] cursor-pointer"
+                    aria-label={`Remove tag ${tag}`}
                   >
                     ×
                   </button>
@@ -450,11 +501,10 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
         </div>
 
         {/* Dietary & Cultural Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label htmlFor={`${formId}-dietary`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <UtensilsCrossed className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-              Dietary Requirements
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="space-y-2">
+            <label htmlFor={`${formId}-dietary`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Dietary Inclusions
             </label>
             <div className="flex gap-2">
               <input
@@ -468,34 +518,31 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
                     addTag('dietaryNeeds', dietaryInput, setDietaryInput);
                   }
                 }}
-                placeholder="e.g. vegan, nut allergy, halal"
+                placeholder="e.g. vegetarian, nut-free"
                 disabled={isLoading}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] text-sm focus:bg-white focus:border-[#6842ed]"
               />
               <button
                 type="button"
                 onClick={() => addTag('dietaryNeeds', dietaryInput, setDietaryInput)}
                 disabled={isLoading || !dietaryInput.trim()}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:opacity-50 text-sm"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer disabled:opacity-50"
               >
                 Add
               </button>
             </div>
             {formData.dietaryNeeds.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2.5" role="list">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 {formData.dietaryNeeds.map((tag, i) => (
                   <span
-                    key={`${tag}-${i}`}
-                    role="listitem"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-xs font-medium border border-emerald-200 dark:border-emerald-800"
+                    key={i}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f0fbf5] text-[#127242] text-xs font-semibold border border-[#d8f5e5]"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => removeTag('dietaryNeeds', i)}
-                      disabled={isLoading}
-                      className="hover:text-emerald-900 dark:hover:text-emerald-100"
-                      aria-label={`Remove dietary requirement ${tag}`}
+                      className="hover:text-[#0b4d2c]"
                     >
                       ×
                     </button>
@@ -505,10 +552,9 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
             )}
           </div>
 
-          <div>
-            <label htmlFor={`${formId}-cultural`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-              <Globe className="w-4 h-4 inline mr-1.5 text-slate-500" aria-hidden="true" />
-              Cultural Considerations
+          <div className="space-y-2">
+            <label htmlFor={`${formId}-cultural`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Cultural & Traditions
             </label>
             <div className="flex gap-2">
               <input
@@ -522,34 +568,31 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
                     addTag('culturalConsiderations', culturalInput, setCulturalInput);
                   }
                 }}
-                placeholder="e.g. bilingual, tea ceremony"
+                placeholder="e.g. unity candle, tea ceremony"
                 disabled={isLoading}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] text-sm focus:bg-white focus:border-[#6842ed]"
               />
               <button
                 type="button"
                 onClick={() => addTag('culturalConsiderations', culturalInput, setCulturalInput)}
                 disabled={isLoading || !culturalInput.trim()}
-                className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 disabled:opacity-50 text-sm"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold cursor-pointer disabled:opacity-50"
               >
                 Add
               </button>
             </div>
             {formData.culturalConsiderations.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2.5" role="list">
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 {formData.culturalConsiderations.map((tag, i) => (
                   <span
-                    key={`${tag}-${i}`}
-                    role="listitem"
-                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 text-xs font-medium border border-purple-200 dark:border-purple-800"
+                    key={i}
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#fff5f6] text-[#b8233f] text-xs font-semibold border border-[#fde4e6]"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => removeTag('culturalConsiderations', i)}
-                      disabled={isLoading}
-                      className="hover:text-purple-900 dark:hover:text-purple-100"
-                      aria-label={`Remove cultural item ${tag}`}
+                      className="hover:text-[#801429]"
                     >
                       ×
                     </button>
@@ -561,41 +604,42 @@ export function EventIntakeForm({ onSubmit, isLoading = false }: EventIntakeForm
         </div>
 
         {/* Additional Notes */}
-        <div>
-          <label htmlFor={`${formId}-notes`} className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1">
-            Additional Directives & Desired Highlights
+        <div className="space-y-1.5">
+          <label htmlFor={`${formId}-notes`} className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+            Special Directives & Highlights (Optional)
           </label>
           <textarea
             id={`${formId}-notes`}
             value={formData.additionalNotes ?? ''}
             onChange={(e) => updateField('additionalNotes', e.target.value)}
             rows={3}
-            placeholder="Special instructions, favorite traditions, VIP guests, or specific vendor constraints..."
+            placeholder="Special instructions, VIP guests, entertainment preferences..."
             disabled={isLoading}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 transition-colors"
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-[#fafbfe] text-[#1c192b] placeholder-slate-400 focus:bg-white focus:border-[#6842ed] focus:ring-4 focus:ring-[#6842ed]/10 transition-all text-sm"
           />
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-4 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-base shadow-lg shadow-indigo-600/25 hover:shadow-indigo-600/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 cursor-pointer"
-        >
-          {isLoading ? (
-            <>
-              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true" />
-              Synthesizing Plan & Guardrails...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-5 h-5 text-indigo-200" aria-hidden="true" />
-              Forge Complete Event Plan
-            </>
-          )}
-        </button>
+        {/* Submit Button — Solid vibrant purple pill button like Image 1 */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-4 px-8 rounded-full bg-[#6842ed] hover:bg-[#5733dd] active:scale-[0.99] text-white font-semibold text-base shadow-md shadow-[#6842ed]/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60"
+          >
+            {isLoading ? (
+              <>
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Synthesizing Event Architecture...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5 text-purple-200" />
+                Generate Event Plan & Interactive Workbench
+              </>
+            )}
+          </button>
+        </div>
       </form>
     </div>
   );
 }
-
