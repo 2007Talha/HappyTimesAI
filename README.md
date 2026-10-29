@@ -70,7 +70,8 @@ HappyTimes rejects the brittle "plain chatbot text box" paradigm in favor of an 
      - *Neighborhood Tech & Art Fair — $12,000* (500 attendees, permits & sanitation)
    - Or enter custom criteria: date, budget, guest count, vibe keywords, dietary needs (halal, vegan, allergen-free), and cultural considerations.
 
-2. **The 4 Operational Pillars:**
+2. **The 4 Operational Pillars & Event History Vault:**
+   - **Event History & Saved Projects Vault:** Built-in local persistence manager (`lib/storage/eventHistory.ts`) that automatically saves every plan generated or tuned. Users can browse past projects, filter by keyword, see countdown days, instantly re-load any past project into the live workbench, or export CSV budgets.
    - **Pillar 1: Dynamic Budget Tracker:** Penny-accurate sliders, category lock toggles, automatic proportional rebalancing of unlocked categories, actual vs estimated variance calculation, and instant CSV spreadsheet download.
    - **Pillar 2: Dual Chronological Timelines:**
      - *Pre-Event Countdown Roadmap:* Computed backward from the target event date ($T-180$ days, $T-60$ days, etc.) with milestone completion toggling and category filters.
@@ -117,7 +118,8 @@ HappyTimes rejects the brittle "plain chatbot text box" paradigm in favor of an 
   - `src/lib/efficiency/budgetCalculator.ts`: Zero tokens wasted on arithmetic. Deterministic penny-accurate math and slider rebalancing.
   - `src/lib/efficiency/responseCache.ts`: Deterministic SHA-256 keyed LRU cache with TTL and latency savings metrics.
 - **Automated Testing Suite (Vitest):**
-  - **32 passing tests across 3 test suites (`src/__tests__/`):**
+  - **35 passing tests across 4 test suites (`src/__tests__/`):**
+    - `storage.test.ts` (3 tests): Event history persistence, auto-update de-duplication, deletion.
     - `security.test.ts` (17 tests): PII redaction, prompt injection defense, XSS sanitization, schema edge cases.
     - `efficiency.test.ts` (9 tests): LRU cache hits/misses/TTL/eviction, penny-accurate budget math, lock rebalancing, 0% recovery redistribution.
     - `plannerService.test.ts` (6 tests): End-to-end orchestration, multi-event vertical generation, cache hits.

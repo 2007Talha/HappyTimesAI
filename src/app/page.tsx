@@ -6,7 +6,7 @@
  * floating pill navigation, and full WCAG 2.1 AA accessibility.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   RefreshCw,
   Search,
@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Info,
+  History,
 } from 'lucide-react';
 import { SkipToContent, AriaLiveAnnouncer, useAnnouncer } from '@/components/a11y/SkipToContent';
 import { EventIntakeForm } from '@/components/forms/EventIntakeForm';
@@ -23,6 +24,7 @@ import { TimelineRoadmap } from '@/components/workbench/TimelineRoadmap';
 import { VendorChecklist } from '@/components/workbench/VendorChecklist';
 import { IdeaGallery } from '@/components/workbench/IdeaGallery';
 import { TelemetryBar } from '@/components/workbench/TelemetryBar';
+import { EventHistoryModal } from '@/components/history/EventHistoryModal';
 import { HappyTimesBrand, HappyTimesIcon } from '@/components/brand/HappyTimesLogo';
 import {
   BudgetTrackerIcon,
@@ -31,7 +33,20 @@ import {
   IdeasStudioIcon,
   PartyBurstIcon,
 } from '@/components/brand/PillIcons';
-import type { EventIntake, EventPlan, Telemetry } from '@/schemas/eventSchemas';
+import type {
+  EventIntake,
+  EventPlan,
+  Telemetry,
+  BudgetPlan,
+  VendorItem,
+  TimelineMilestone,
+} from '@/schemas/eventSchemas';
+import {
+  getSavedEvents,
+  saveEventToHistory,
+  deleteSavedEvent,
+  type SavedEventRecord,
+} from '@/lib/storage/eventHistory';
 import { generateDeterministic } from '@/services/llmGateway';
 import { fireConfetti } from '@/lib/confetti';
 
@@ -42,12 +57,22 @@ export default function HomePage(): React.JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'budget' | 'timeline' | 'vendors' | 'ideas'>('budget');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [savedEvents, setSavedEvents] = useState<SavedEventRecord[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
   const { message: announceMessage, announce } = useAnnouncer();
+
+  // Load saved history on mount
+  useEffect(() => {
+    setSavedEvents(getSavedEvents());
+  }, []);
 
   const handleFormSubmit = useCallback(async (intakeData: EventIntake) => {
     setIsLoading(true);
     setErrorMessage(null);
     announce(`Synthesizing tailored event plan for ${intakeData.eventName}...`);
+
+    let finalPlan: EventPlan;
+    let finalTelemetry: Telemetry;
 
     try {
       const response = await fetch('/api/plan', {
@@ -59,15 +84,13 @@ export default function HomePage(): React.JSX.Element {
       const data = await response.json();
 
       if (data.success && data.plan) {
-        setCurrentIntake(intakeData);
-        setCurrentPlan(data.plan);
-        setTelemetry(data.telemetry);
+        finalPlan = data.plan;
+        finalTelemetry = data.telemetry;
         announce(`Event plan synthesized successfully! Displaying workbench for ${intakeData.eventName}.`);
       } else {
         const fallbackResult = generateDeterministic(intakeData);
-        setCurrentIntake(intakeData);
-        setCurrentPlan(fallbackResult.plan);
-        setTelemetry({
+        finalPlan = fallbackResult.plan;
+        finalTelemetry = {
           inputSanitized: true,
           piiTokensRedacted: 0,
           promptInjectionBlocked: false,
@@ -75,14 +98,13 @@ export default function HomePage(): React.JSX.Element {
           latencyMs: fallbackResult.latencyMs,
           schemaValid: true,
           source: 'deterministic',
-        });
+        };
         announce(`Generated plan using deterministic smart engine.`);
       }
     } catch (err) {
       const fallbackResult = generateDeterministic(intakeData);
-      setCurrentIntake(intakeData);
-      setCurrentPlan(fallbackResult.plan);
-      setTelemetry({
+      finalPlan = fallbackResult.plan;
+      finalTelemetry = {
         inputSanitized: true,
         piiTokensRedacted: 0,
         promptInjectionBlocked: false,
@@ -90,12 +112,58 @@ export default function HomePage(): React.JSX.Element {
         latencyMs: fallbackResult.latencyMs,
         schemaValid: true,
         source: 'deterministic',
-      });
+      };
       announce(`Plan generated offline using deterministic smart engine.`);
     } finally {
       setIsLoading(false);
     }
+
+    setCurrentIntake(intakeData);
+    setCurrentPlan(finalPlan);
+    setTelemetry(finalTelemetry);
+
+    // Persist to browser event history
+    saveEventToHistory(intakeData, finalPlan, finalTelemetry);
+    setSavedEvents(getSavedEvents());
   }, [announce]);
+
+  const handleSelectSavedEvent = (record: SavedEventRecord) => {
+    setCurrentIntake(record.intake);
+    setCurrentPlan(record.plan);
+    setTelemetry(record.telemetry ?? null);
+    announce(`Loaded saved event: ${record.intake.eventName}`);
+  };
+
+  const handleDeleteSavedEvent = (id: string) => {
+    deleteSavedEvent(id);
+    const updated = getSavedEvents();
+    setSavedEvents(updated);
+    announce('Event removed from saved history.');
+  };
+
+  const handleBudgetChange = (updatedBudget: BudgetPlan) => {
+    if (!currentPlan || !currentIntake) return;
+    const updatedPlan: EventPlan = { ...currentPlan, budget: updatedBudget };
+    setCurrentPlan(updatedPlan);
+    saveEventToHistory(currentIntake, updatedPlan, telemetry);
+    setSavedEvents(getSavedEvents());
+  };
+
+  const handleVendorsChange = (updatedVendors: VendorItem[]) => {
+    if (!currentPlan || !currentIntake) return;
+    const updatedPlan: EventPlan = { ...currentPlan, vendors: updatedVendors };
+    setCurrentPlan(updatedPlan);
+    saveEventToHistory(currentIntake, updatedPlan, telemetry);
+    setSavedEvents(getSavedEvents());
+  };
+
+  const handleMilestonesChange = (updatedMilestones: TimelineMilestone[]) => {
+    if (!currentPlan || !currentIntake) return;
+    const updatedPlan: EventPlan = { ...currentPlan, preEventTimeline: updatedMilestones };
+    setCurrentPlan(updatedPlan);
+    saveEventToHistory(currentIntake, updatedPlan, telemetry);
+    setSavedEvents(getSavedEvents());
+  };
 
   const handleReset = () => {
     setCurrentPlan(null);
@@ -196,7 +264,23 @@ export default function HomePage(): React.JSX.Element {
           )}
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsHistoryOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-2xs transition-all cursor-pointer"
+              title="View saved event history"
+            >
+              <History className="w-3.5 h-3.5 text-[#5c3beb]" />
+              <span className="hidden sm:inline">Saved Events</span>
+              <span className="inline sm:hidden">History</span>
+              {savedEvents.length > 0 && (
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-[#f1effd] text-[#5c3beb] border border-[#ded8f9]">
+                  {savedEvents.length}
+                </span>
+              )}
+            </button>
+
             {currentPlan && (
               <button
                 type="button"
@@ -208,7 +292,7 @@ export default function HomePage(): React.JSX.Element {
               </button>
             )}
 
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f0fbf5] text-[#127242] border border-[#d8f5e5]">
+            <span className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#f0fbf5] text-[#127242] border border-[#d8f5e5]">
               <span className="w-2 h-2 rounded-full bg-[#127242] animate-pulse" />
               WCAG 2.1 AA
             </span>
@@ -246,6 +330,19 @@ export default function HomePage(): React.JSX.Element {
                 <p className="text-base text-slate-600 leading-relaxed pt-1">
                   Tailored budgets with automatic category rebalancing, dual countdown and run-of-show schedules, vendor due-diligence questions, and personalized creative ideas.
                 </p>
+
+                {savedEvents.length > 0 && (
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsHistoryOpen(true)}
+                      className="inline-flex items-center gap-2 text-xs font-bold text-[#5c3beb] bg-white border border-[#ded8f9] px-4 py-2 rounded-full hover:bg-[#f1effd] transition-all cursor-pointer shadow-2xs hover:shadow-sm"
+                    >
+                      <History className="w-3.5 h-3.5" />
+                      <span>Resume Previously Saved Project ({savedEvents.length})</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Decorative Authentic Brand Mark Accent */}
@@ -364,6 +461,7 @@ export default function HomePage(): React.JSX.Element {
                 <BudgetTracker
                   initialBudget={currentPlan.budget}
                   eventName={currentIntake?.eventName || 'Event'}
+                  onBudgetChange={handleBudgetChange}
                 />
               )}
 
@@ -373,6 +471,7 @@ export default function HomePage(): React.JSX.Element {
                   eventDate={currentIntake?.eventDate || '2027-01-01'}
                   initialMilestones={currentPlan.preEventTimeline}
                   initialDayOfSchedule={currentPlan.dayOfSchedule}
+                  onMilestonesChange={handleMilestonesChange}
                 />
               )}
 
@@ -380,6 +479,7 @@ export default function HomePage(): React.JSX.Element {
                 <VendorChecklist
                   initialVendors={currentPlan.vendors}
                   eventId={currentIntake?.eventName}
+                  onVendorsChange={handleVendorsChange}
                 />
               )}
 
@@ -393,6 +493,19 @@ export default function HomePage(): React.JSX.Element {
         {/* Real-Time System Engineering & Telemetry Drawer */}
         <TelemetryBar telemetry={telemetry} />
       </main>
+
+      {/* Event History & Saved Projects Modal */}
+      <EventHistoryModal
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        savedEvents={savedEvents}
+        onSelectEvent={handleSelectSavedEvent}
+        onDeleteEvent={handleDeleteSavedEvent}
+        onStartNewEvent={() => {
+          handleReset();
+          setIsHistoryOpen(false);
+        }}
+      />
 
       {/* Semantic Light Footer */}
       <footer className="mt-auto py-10 border-t border-slate-200/80 bg-white text-slate-500 text-xs">
