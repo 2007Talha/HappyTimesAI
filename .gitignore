@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 /demo-output
+/scripts
 
 # debug
 npm-debug.log*
