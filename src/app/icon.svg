@@ -1,0 +1,41 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ht-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5c3beb" />
+      <stop offset="50%" stop-color="#6d46f5" />
+      <stop offset="100%" stop-color="#8c67fa" />
+    </linearGradient>
+    <filter id="ht-shadow" x="-4" y="-2" width="72" height="72" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#5c3beb" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect x="2" y="2" width="60" height="60" rx="18" fill="url(#ht-grad)" filter="url(#ht-shadow)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+
+  <!-- Calendar Planner Board -->
+  <rect x="12" y="18" width="34" height="32" rx="6" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="#ffffff" fill-opacity="0.15" />
+  
+  <!-- Calendar Header Line -->
+  <path d="M12 27H46" stroke="#ffffff" stroke-width="2.5" stroke-opacity="0.85" stroke-linecap="round" />
+  
+  <!-- Top Binder Rings -->
+  <path d="M20 13V19" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+  <path d="M38 13V19" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Diagonal Magic Wand -->
+  <path d="M14 48L32 30" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M16 46L20 50" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-opacity="0.6" />
+
+  <!-- Radiant Star Burst at Wand Tip -->
+  <path d="M38 15L39.8 20.2L45.2 20.8L41 24.2L42.2 29.5L37.7 26.8L33.2 29.5L34.4 24.2L30.2 20.8L35.6 20.2L38 15Z" fill="#ffffff" />
+  
+  <!-- Star Sparkle Rays & Dots -->
+  <circle cx="47" cy="16" r="1.8" fill="#fef08a" />
+  <circle cx="30" cy="15" r="1.6" fill="#fef08a" />
+  <circle cx="48" cy="27" r="1.6" fill="#fef08a" />
+
+  <!-- Round Clock Timer at Bottom-Right -->
+  <circle cx="42" cy="42" r="8" stroke="#ffffff" stroke-width="3" fill="#5c3beb" />
+  <path d="M42 38V42L45 44" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

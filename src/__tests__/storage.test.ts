@@ -83,3 +83,4 @@ describe('Event History Storage', () => {
     expect(getSavedEvents()).toHaveLength(0);
   });
 });
+

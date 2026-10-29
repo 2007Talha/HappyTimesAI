@@ -350,3 +350,4 @@ export function EventHistoryModal({
     </div>
   );
 }
+

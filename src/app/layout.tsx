@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "HappyTimes — Event Planning Assistant",
   description:
     "HappyTimes is your thoughtful, accessible event planning studio for Weddings, Birthdays, and Community Gatherings with dynamic budgets, dual timelines, and vendor checklists.",
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
