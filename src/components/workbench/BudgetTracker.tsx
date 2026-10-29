@@ -30,6 +30,7 @@ import {
 } from '@/lib/efficiency/budgetCalculator';
 import { exportBudgetToCsv, downloadFile } from '@/lib/export/exporters';
 import { fireConfetti } from '@/lib/confetti';
+import { BudgetTrackerIcon } from '@/components/brand/PillIcons';
 
 interface BudgetTrackerProps {
   initialBudget: BudgetPlan;
@@ -176,8 +177,10 @@ export function BudgetTracker({
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
             Penny-Accurate Interactive Engine
           </span>
-          <h2 id={`${componentId}-budget-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
-            <Coins className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+          <h2 id={`${componentId}-budget-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#5c3beb]/10 text-[#5c3beb] flex items-center justify-center">
+              <BudgetTrackerIcon className="w-4 h-4" />
+            </div>
             Dynamic Budget Allocator
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -214,7 +217,7 @@ export function BudgetTracker({
           <button
             type="button"
             onClick={handleExportCsv}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-[#6842ed] hover:bg-[#5733dd] text-white shadow-sm transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2 text-xs font-bold rounded-full bg-[#5c3beb] hover:bg-[#4a2ec4] text-white shadow-md shadow-[#5c3beb]/25 hover:shadow-lg transition-all cursor-pointer"
             aria-label="Export budget to CSV"
           >
             <Download className="w-3.5 h-3.5" />

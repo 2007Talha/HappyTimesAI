@@ -22,6 +22,7 @@ import {
 import type { TimelineMilestone, DayOfScheduleItem } from '@/schemas/eventSchemas';
 import { exportTimelineToIcs, downloadFile } from '@/lib/export/exporters';
 import { fireConfetti } from '@/lib/confetti';
+import { DualTimelinesIcon } from '@/components/brand/PillIcons';
 
 interface TimelineRoadmapProps {
   eventName: string;
@@ -87,8 +88,10 @@ export function TimelineRoadmap({
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
             Dual Chronological Cadence
           </span>
-          <h2 id={`${componentId}-timeline-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+          <h2 id={`${componentId}-timeline-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#5c3beb]/10 text-[#5c3beb] flex items-center justify-center">
+              <DualTimelinesIcon className="w-4 h-4" />
+            </div>
             Milestones & Run-of-Show
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">

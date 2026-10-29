@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { VendorItem } from '@/schemas/eventSchemas';
 import { fireConfetti } from '@/lib/confetti';
+import { VendorChecklistIcon } from '@/components/brand/PillIcons';
 
 interface VendorChecklistProps {
   initialVendors: VendorItem[];
@@ -138,8 +139,10 @@ export function VendorChecklist({
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#6842ed] bg-[#f1effd] px-3 py-1 rounded-full">
             Procurement & Due-Diligence
           </span>
-          <h2 id={`${componentId}-vendor-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-[#6842ed]" aria-hidden="true" />
+          <h2 id={`${componentId}-vendor-heading`} className="text-2xl font-bold font-editorial text-[#1c192b] mt-1.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#5c3beb]/10 text-[#5c3beb] flex items-center justify-center">
+              <VendorChecklistIcon className="w-4 h-4" />
+            </div>
             Vendor Due-Diligence Checklist
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
