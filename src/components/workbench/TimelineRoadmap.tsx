@@ -8,8 +8,6 @@
 
 import React, { useState, useId } from 'react';
 import {
-  Calendar,
-  Clock,
   CheckCircle2,
   Circle,
   Download,

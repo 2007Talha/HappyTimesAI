@@ -6,14 +6,9 @@
  * floating pill navigation, and full WCAG 2.1 AA accessibility.
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   RefreshCw,
-  Search,
-  Check,
-  ShieldCheck,
-  SlidersHorizontal,
-  ChevronRight,
   Info,
   History,
 } from 'lucide-react';
@@ -57,14 +52,12 @@ export default function HomePage(): React.JSX.Element {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'budget' | 'timeline' | 'vendors' | 'ideas'>('budget');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [savedEvents, setSavedEvents] = useState<SavedEventRecord[]>([]);
+  const [savedEvents, setSavedEvents] = useState<SavedEventRecord[]>(() => {
+    if (typeof window === 'undefined') return [];
+    return getSavedEvents();
+  });
   const [isHistoryOpen, setIsHistoryOpen] = useState<boolean>(false);
   const { message: announceMessage, announce } = useAnnouncer();
-
-  // Load saved history on mount
-  useEffect(() => {
-    setSavedEvents(getSavedEvents());
-  }, []);
 
   const handleFormSubmit = useCallback(async (intakeData: EventIntake) => {
     setIsLoading(true);
@@ -102,6 +95,7 @@ export default function HomePage(): React.JSX.Element {
         announce(`Generated plan using deterministic smart engine.`);
       }
     } catch (err) {
+      console.warn('[HappyTimes] API call failed, falling back to deterministic engine:', err);
       const fallbackResult = generateDeterministic(intakeData);
       finalPlan = fallbackResult.plan;
       finalTelemetry = {

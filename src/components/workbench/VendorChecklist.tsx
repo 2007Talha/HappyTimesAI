@@ -6,7 +6,7 @@
  * inspecting interview questions to ask vendors, and linking to budget.
  */
 
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useId } from 'react';
 import {
   CheckSquare,
   Square,
@@ -15,7 +15,6 @@ import {
   ChevronUp,
   Plus,
   AlertCircle,
-  Briefcase,
 } from 'lucide-react';
 import type { VendorItem } from '@/schemas/eventSchemas';
 import { fireConfetti } from '@/lib/confetti';
@@ -33,7 +32,22 @@ export function VendorChecklist({
   onVendorsChange,
 }: VendorChecklistProps): React.JSX.Element {
   const componentId = useId();
-  const [vendors, setVendors] = useState<VendorItem[]>(initialVendors);
+  const [vendors, setVendors] = useState<VendorItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem(`happytimes_vendors_${eventId}`) || localStorage.getItem(`eventforge_vendors_${eventId}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (err) {
+        console.warn('Error reading vendors from localStorage', err);
+      }
+    }
+    return initialVendors;
+  });
   const [expandedVendorId, setExpandedVendorId] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'booked' | 'pending'>('all');
@@ -43,22 +57,6 @@ export function VendorChecklist({
   const [newCategory, setNewCategory] = useState('');
   const [newPriority, setNewPriority] = useState<'high' | 'medium' | 'low'>('medium');
   const [newCost, setNewCost] = useState(0);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = localStorage.getItem(`happytimes_vendors_${eventId}`) || localStorage.getItem(`eventforge_vendors_${eventId}`);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setVendors(parsed);
-          }
-        }
-      } catch (err) {
-        console.warn('Error reading vendors from localStorage', err);
-      }
-    }
-  }, [eventId]);
 
   const saveVendors = (newVendors: VendorItem[]) => {
     setVendors(newVendors);

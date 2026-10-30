@@ -16,7 +16,6 @@ import {
   ChevronDown,
   ChevronUp,
   Activity,
-  Cpu,
 } from 'lucide-react';
 import type { Telemetry } from '@/schemas/eventSchemas';
 

@@ -233,7 +233,6 @@ export function rebalanceBudget(
     }
   } else if (requestedDelta < 0) {
     // User wants to decrease: gives budget back to unlocked categories
-    const freedAmount = Math.abs(requestedDelta);
     const clampedNewPct = Math.max(0, newPercentage);
     const actualFreed = oldPercentage - clampedNewPct;
 
@@ -258,7 +257,7 @@ export function rebalanceBudget(
       const equalShare = actualFreed / unlocked.length;
       for (const { category } of unlocked) {
         category.percentage = Math.round(equalShare * 100) / 100;
-        category.estimatedCents = Math.round((category.percentage / 100) * totalCents);
+        category.estimatedCents = Math.round((equalShare / 100) * totalCents);
       }
     }
   }
@@ -272,8 +271,8 @@ export function rebalanceBudget(
   }
 
   // Re-sync all estimatedCents so the dollar sum matches totalCents to the penny
-  let currentCentsSum = updated.reduce((sum, c) => sum + c.estimatedCents, 0);
-  let centsDiff = totalCents - currentCentsSum;
+  const currentCentsSum = updated.reduce((sum, c) => sum + c.estimatedCents, 0);
+  const centsDiff = totalCents - currentCentsSum;
   if (centsDiff !== 0 && unlocked.length > 0) {
     unlocked[0].category.estimatedCents += centsDiff;
   }

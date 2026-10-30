@@ -10,7 +10,6 @@ import {
   calculateBudget,
   rebalanceBudget,
   calculateVariance,
-  centsToDollars,
   dollarsToCents,
   BudgetCategory,
 } from '@/lib/efficiency/budgetCalculator';

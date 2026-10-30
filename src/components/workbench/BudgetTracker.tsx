@@ -15,7 +15,6 @@ import {
   Download,
   CheckCircle2,
   Plus,
-  Coins,
   Sparkles,
   RotateCcw,
   Equal,
@@ -24,7 +23,6 @@ import type { BudgetPlan, BudgetCategory } from '@/schemas/eventSchemas';
 import {
   rebalanceBudget,
   distributeEvenly,
-  calculateVariance,
   centsToDollars,
   dollarsToCents,
 } from '@/lib/efficiency/budgetCalculator';
@@ -72,10 +70,8 @@ export function BudgetTracker({
     isLocked: c.isLocked,
   }));
 
-  const varianceData = calculateVariance(internalCategories);
   const totalActualDollars = budgetPlan.categories.reduce((acc, c) => acc + c.actualSpent, 0);
   const totalEstimatedDollars = budgetPlan.categories.reduce((acc, c) => acc + c.estimatedAmount, 0);
-  const totalVarianceDollars = totalActualDollars - totalEstimatedDollars;
   const isOverallOverBudget = totalActualDollars > budgetPlan.totalBudget;
 
   const toggleLock = (index: number) => {

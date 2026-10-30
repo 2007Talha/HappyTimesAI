@@ -7,14 +7,7 @@
 
 import React, { useState, useCallback, useId } from 'react';
 import {
-  Calendar,
-  DollarSign,
-  Users,
-  MapPin,
   Sparkles,
-  UtensilsCrossed,
-  Globe,
-  FileText,
   Heart,
   Cake,
   Building2,
